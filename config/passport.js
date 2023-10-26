@@ -12,7 +12,6 @@ module.exports = function (passport) {
                 email: email
             }).then(user => {
                 if (!user) {
-                    console.log("no user man")
                     return done(null, false, { message: 'This email ID is not registered' });
                 }
 
