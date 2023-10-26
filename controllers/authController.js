@@ -14,7 +14,7 @@ const User = require('../models/User');
 exports.registerHandle = (req, res) => {
     const { name, email, password, password2 } = req.body;
     let errors = [];
-
+    
     //------------ Checking required fields ------------//
     if (!name || !email || !password || !password2) {
         errors.push({ msg: 'Please enter all fields' });
@@ -39,80 +39,17 @@ exports.registerHandle = (req, res) => {
             password2
         });
     } else {
+        console.log("in registerHandle")
         //------------ Validation passed ------------//
-        User.findOne({ email: email }).then(user => {
-            if (user) {
-                //------------ User already exists ------------//
-                errors.push({ msg: 'Email ID already registered' });
-                res.render('register', {
-                    errors,
-                    name,
-                    email,
-                    password,
-                    password2
-                });
+        user = new User({email: email, name: name, password: password});
+        user.save((err) => {
+            if (err) {
+                // Handle the error, e.g., log it or send an error response to the client
+                console.error(err);
+                res.status(500).send('Internal Server Error');
             } else {
-
-                const oauth2Client = new OAuth2(
-                    "173872994719-pvsnau5mbj47h0c6ea6ojrl7gjqq1908.apps.googleusercontent.com", // ClientID
-                    "OKXIYR14wBB_zumf30EC__iJ", // Client Secret
-                    "https://developers.google.com/oauthplayground" // Redirect URL
-                );
-
-                oauth2Client.setCredentials({
-                    refresh_token: "1//04T_nqlj9UVrVCgYIARAAGAQSNwF-L9IrGm-NOdEKBOakzMn1cbbCHgg2ivkad3Q_hMyBkSQen0b5ABfR8kPR18aOoqhRrSlPm9w"
-                });
-                const accessToken = oauth2Client.getAccessToken()
-
-                const token = jwt.sign({ name, email, password }, JWT_KEY, { expiresIn: '30m' });
-                const CLIENT_URL = 'http://' + req.headers.host;
-
-                const output = `
-                <h2>Please click on below link to activate your account</h2>
-                <p>${CLIENT_URL}/auth/activate/${token}</p>
-                <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
-                `;
-
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        type: "OAuth2",
-                        user: "nodejsa@gmail.com",
-                        clientId: "173872994719-pvsnau5mbj47h0c6ea6ojrl7gjqq1908.apps.googleusercontent.com",
-                        clientSecret: "OKXIYR14wBB_zumf30EC__iJ",
-                        refreshToken: "1//04T_nqlj9UVrVCgYIARAAGAQSNwF-L9IrGm-NOdEKBOakzMn1cbbCHgg2ivkad3Q_hMyBkSQen0b5ABfR8kPR18aOoqhRrSlPm9w",
-                        accessToken: accessToken
-                    },
-                });
-
-                // send mail with defined transport object
-                const mailOptions = {
-                    from: '"Auth Admin" <nodejsa@gmail.com>', // sender address
-                    to: email, // list of receivers
-                    subject: "Account Verification: NodeJS Auth ✔", // Subject line
-                    generateTextFromHTML: true,
-                    html: output, // html body
-                };
-
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.log(error);
-                        req.flash(
-                            'error_msg',
-                            'Something went wrong on our end. Please register again.'
-                        );
-                        res.redirect('/auth/login');
-                    }
-                    else {
-                        console.log('Mail sent : %s', info.response);
-                        req.flash(
-                            'success_msg',
-                            'Activation link sent to email ID. Please activate to log in.'
-                        );
-                        res.redirect('/auth/login');
-                    }
-                })
-
+                // User saved successfully
+                res.redirect('/auth/login');
             }
         });
     }

@@ -12,18 +12,24 @@ module.exports = function (passport) {
                 email: email
             }).then(user => {
                 if (!user) {
+                    console.log("no user man")
                     return done(null, false, { message: 'This email ID is not registered' });
                 }
 
                 //------------ Password Matching ------------//
-                bcrypt.compare(password, user.password, (err, isMatch) => {
-                    if (err) throw err;
-                    if (isMatch) {
-                        return done(null, user);
-                    } else {
-                        return done(null, false, { message: 'Password incorrect! Please try again.' });
-                    }
-                });
+                // bcrypt.compare(password, user.password, (err, isMatch) => {
+                //     if (err) throw err;
+                //     if (isMatch) {
+                //         return done(null, user);
+                //     } else {
+                //         return done(null, false, { message: 'Password incorrect! Please try again.' });
+                //     }
+                // });
+                if (password == user.password){
+                    return done(null, user);
+                } else {
+                    return done(null, false, { message: 'Password incorrect! Please try again.' });
+                }
             });
         })
     );
