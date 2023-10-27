@@ -3,6 +3,7 @@ import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 import os
 import uuid
+import cv2
 
 (ds_train), ds_info = tfds.load(
     'mnist',
@@ -12,6 +13,9 @@ import uuid
     with_info=True,
 )
 
+for i in range(10) : 
+    os.mkdir(os.path.join("captcha", "images_dirs",str(i)))
+
 for index, (image, label)in enumerate(ds_train.shuffle(100)) : 
     fig = plt.figure()
     plt.imshow(image)
@@ -20,5 +24,5 @@ for index, (image, label)in enumerate(ds_train.shuffle(100)) :
     plt.axis('off')
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
     plt.margins(0, 0)
-    plt.savefig(os.path.join("captcha","images",str(label.numpy())+'_'+str(uuid.uuid1())))
+    plt.savefig(os.path.join("captcha","images_dirs",str(label.numpy()),str(uuid.uuid1())))
     plt.close()
