@@ -8,24 +8,83 @@
                 Login
             </h2>
             <%- include ("./messages") %>
-            <form action="/auth/login" method="POST">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email" />
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control"
-                        placeholder="Enter Password" />
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Login</button>
-            </form>
-            <p class="mt-4">
-                New User? <a href="/auth/register">Register</a>
-            </p>
-            <p>
-                Forgot Password? <a href="/auth/forgot">Reset</a>
-            </p>
+                <form action="/auth/login" method="POST">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control"
+                            placeholder="Enter Password" />
+                    </div>
+
+                    <div class="form-group captcha">
+                        <label for="captcha">Captcha</label>
+                        <button>
+                            <div class="square_red"></div>
+                        </button>
+                        <button>
+                            <div class="square_blue"></div>
+                        </button>
+                    </div>
+                    <style>
+                        .square_blue {
+                            background: blue;
+                            width: 50px;
+                            height: 50px;
+                        }
+
+                        .square_red {
+                            background: red;
+                            width: 50px;
+                            height: 50px;
+                        }
+
+                        .captcha {
+                            display: flex;
+                            gap: 100px;
+                            justify-content: center;
+                        }
+                    </style>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+
+                </form>
+                <p class="mt-4">
+                    New User? <a href="/auth/register">Register</a>
+                </p>
+                <p>
+                    Forgot Password? <a href="/auth/forgot">Reset</a>
+                </p>
         </div>
     </div>
+    <script>
+        document.querySelector("#id-checkbox").addEventListener('DOMContentLoaded', function () {
+            const captchaSquare = document.getElementById('captchaSquare');
+            const captchaAnswerInput = document.getElementById('captchaAnswer');
+            const colors = ['red', 'blue'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            captchaSquare.style.backgroundColor = randomColor;
+            captchaAnswerInput.value = randomColor;
+
+            captchaSquare.addEventListener('click', function () {
+                const clickedColor = captchaSquare.style.backgroundColor;
+
+                if (clickedColor === randomColor) {
+                    alert('CAPTCHA solved! You clicked the right color.');
+                } else {
+                    alert('Incorrect! Please try again.');
+                }
+            });
+        });
+        document.querySelector("button").addEventListener(
+            "click",
+            function (event) {
+                console.log("Désolé ! preventDefault() ne vous laissera pas cocher ceci.");
+                event.preventDefault();
+            },
+            false,
+        );
+    </script>
+
 </div>
