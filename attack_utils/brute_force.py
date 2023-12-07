@@ -13,6 +13,7 @@ import threading
 import requests
 import time
 import sys
+from label import label
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message):

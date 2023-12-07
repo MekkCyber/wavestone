@@ -10,7 +10,7 @@ np.random.seed(seed)
 tf.random.set_seed(seed)
 
 #choix base de données
-def get_dataset() : 
+def get_dataset(batch_size=128) : 
     (ds_train, ds_val, ds_test), ds_info = tfds.load(
         'mnist',
         split=['train[:40%]','train[40%:60%]', 'test'],
@@ -25,20 +25,19 @@ def get_dataset() :
     ds_train = ds_train.map(
         normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
     ds_train = ds_train.cache()
-    ds_train = ds_train.batch(128)
+    ds_train = ds_train.batch(batch_size)
     ds_train = ds_train.prefetch(tf.data.AUTOTUNE)
 
     ds_val = ds_val.map(
         normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
     ds_val = ds_val.cache()
-    ds_val = ds_val.batch(128)
+    ds_val = ds_val.batch(batch_size)
     ds_val = ds_val.prefetch(tf.data.AUTOTUNE)
 
     ds_test = ds_test.map(normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
     ds_test = ds_test.cache().batch(32).prefetch(tf.data.AUTOTUNE)
     return ds_train, ds_val, ds_test
 
-#implémentation modèle (ici CNN)
 def create_model() : 
     model_conv = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(8, 3, padding="same", activation = "relu", input_shape=(28,28,1)),
@@ -65,39 +64,24 @@ def create_model() :
 
 
 
-def train(model_conv, ds_train, ds_val) : 
-    checkpoint_path = "checkpoints/labeler/training_1/cp.ckpt"
-    checkpoint_dir = os.path.dirname(checkpoint_path)
-
+def train(model_conv, ds_train, ds_val, batch_size=128, epochs=20) : 
+    checkpoint_path = "checkpoints/labeler/training_1/cp-{epoch:02d}.ckpt"
+    n_batches = len(ds_train) / batch_size
 
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
+                                                    save_freq="epoch",
                                                     verbose=1)
 
     model_conv.fit(
         ds_train,
-        epochs = 10,
+        epochs = epochs,
         validation_data = ds_val,
         callbacks=[cp_callback]
     )
-
-# cols = 8
-# rows = 4
-
-# plt.figure(figsize=(cols, rows))
-
-# for image, label in ds_test.take(1) :
-#   preds = model_conv.predict(image)
-#   preds = tf.nn.softmax(preds, axis=-1)
-#   for i in range(32) :
-#     plt.subplot(rows, cols, i + 1)
-#     plt.title(f"{label[i].numpy()}-{np.argmax(preds[i])}")
-#     plt.imshow(image[i])
-#     plt.axis('off')
-#   break
 
 
 if __name__ == "__main__" : 
   ds_train, ds_val, ds_test = get_dataset()
   model = create_model()
-  train(model, ds_train, ds_val)
+  train(model, ds_train, ds_val, epochs=4)
