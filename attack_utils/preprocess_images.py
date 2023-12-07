@@ -28,6 +28,8 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
   image_size=(img_height, img_width),
   batch_size=10)
 
-for image in train_ds.take(1) : 
-    print(image[0].shape)
-    break
+
+preprocessing_pipeline = tf.keras.Sequential([
+    tf.keras.layers.Cropping2D(cropping=((2, 2), (4, 4)))
+])
+
