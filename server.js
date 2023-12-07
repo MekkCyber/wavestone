@@ -51,7 +51,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
+app.use('/attack_utils/images_dirs',express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
 
 //------------ Routes ------------//
 app.use('/', require('./routes/index'));
