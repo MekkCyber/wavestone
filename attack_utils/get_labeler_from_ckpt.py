@@ -3,7 +3,7 @@ from dl_models import labeler_cnn
 def get_labeler_from_ckpt(checkpoint_path=None) : 
     model = labeler_cnn.create_model()
     if checkpoint_path is None : 
-        checkpoint_path = "checkpoints/labeler/training_1/cp-04.ckpt"
+        checkpoint_path = "checkpoints/labeler/training_1/cp-19.ckpt"
 
     model.load_weights(checkpoint_path).expect_partial()
     _, _, ds_test = labeler_cnn.get_dataset()
