@@ -50,16 +50,33 @@ def crack_passwords(passwords, cracker):
             return
 def retrieve_captcha_images(url) : 
     for _ in range(10) : 
+        img_url = []
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             div_tag = soup.find('div', id='randomImages')
+            
             if div_tag:
+                link = div_tag.img.get("src")
+                img_url.append(link)
                 print(div_tag)
+
             else:
                 print("Div tag not found.")
+            
         else:
             print("Failed to retrieve data. Status code:", response.status_code)
+
+    for i in range (len(img_url)):
+        img_url[i] = "http://localhost:3006"+img_url[i]
+        response = requests.get(img_url[i])
+        chemin_local = "image.jpg"
+        if response.status_code ==200:
+            with open(chemin_local, "wb") as f:
+                f.write(response.content)
+    print(img_url)
+
+
 
 def main():
     url = input("Enter Target Url: ")
