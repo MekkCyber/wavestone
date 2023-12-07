@@ -43,7 +43,6 @@
 
                         <label for="captcha">Captcha</label>
                         <div id="randomImages">
-                            <!--<% console.log('imagePaths:', imagePaths); %>-->
                             <% let captcha_value = 0;%>
                             <%function shiftAndAddDigit(value, newDigit) {%>
                                 <%return (value*10 + newDigit);%>
@@ -54,7 +53,6 @@
                                 <%captcha_value = shiftAndAddDigit(captcha_value, randomIndex);%>
                                 <% const randomFolder = imagePaths[randomIndex].folder; %>
                                 <% const randomFiles = imagePaths[randomIndex].files; %>
-                                <%console.log("Randome file :", randomFiles)%>
                                 <% const randomImageName = randomFiles[Math.floor(Math.random() * randomFiles.length)]; %>
                                 <img src="/attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
                             <% } %>
