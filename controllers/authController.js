@@ -323,7 +323,7 @@ exports.loginHandle = (req, res, next) => {
 
 //------------ Logout Handle ------------//
 exports.logoutHandle = (req, res) => {
-    req.logout();
+    //req.logout();
     req.flash('success_msg', 'You are logged out');
     res.redirect('/auth/login');
 }

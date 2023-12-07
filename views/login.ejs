@@ -20,33 +20,60 @@
                     </div>
 
                     <div class="form-group captcha">
+                        <style>
+                            #randomImages {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 20px;
+                            }                    
+                            #randomImages img {
+                                max-width: 100px;
+                                max-height: 100px;
+                            }
+                        </style>                       
+
                         <label for="captcha">Captcha</label>
-                        <button>
-                            <div class="square_red"></div>
-                        </button>
-                        <button>
-                            <div class="square_blue"></div>
-                        </button>
+                        <div id="randomImages">
+                            <!--<% console.log('imagePaths:', imagePaths); %>-->
+                            <% let captcha_value = 0;%>
+                            <%function shiftAndAddDigit(value, newDigit) {%>
+                                <%return (value*10 + newDigit);%>
+                            <%}%>
+
+                            <% for (let i = 0; i < 4; i++) { %>
+                                <%const randomIndex = Math.floor(Math.random() * imagePaths.length); %>
+                                <%captcha_value = shiftAndAddDigit(captcha_value, randomIndex);%>
+                                <% const randomFolder = imagePaths[randomIndex].folder; %>
+                                <% const randomFiles = imagePaths[randomIndex].files; %>
+                                <%console.log("Randome file :", randomFiles)%>
+                                <% const randomImageName = randomFiles[Math.floor(Math.random() * randomFiles.length)]; %>
+                                <img src="./attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
+                            <% } %>
+                          </div>
+                          
                     </div>
+                    <div class="form-group captcha">
+                        <label for="user_captcha_input">Enter a 4-digit number:</label>
+                        <input type="text" id="user_captcha_input" maxlength="4" oninput="validateInput(this)" pattern="\d{4}" title="Please enter a 4-digit number">                         
+                    </div>
+
                     <style>
-                        .square_blue {
-                            background: blue;
-                            width: 50px;
-                            height: 50px;
-                        }
-
-                        .square_red {
-                            background: red;
-                            width: 50px;
-                            height: 50px;
-                        }
-
                         .captcha {
                             display: flex;
                             gap: 100px;
                             justify-content: center;
                         }
                     </style>
+                    <script>
+                        function validateInput(input) {
+                          input.value = input.value.replace(/\D/g, '');
+                          if (/^\d{4}$/.test(input.value)) {
+                            input.setCustomValidity('');
+                          } else {
+                            input.setCustomValidity('Please enter a 4-digit number');
+                          }
+                        }
+                    </script>
                     <button type="submit" class="btn btn-primary btn-block">Login</button>
 
                 </form>

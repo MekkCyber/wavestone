@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
+const path = require('path');
 
 const app = express();
 
@@ -49,6 +50,9 @@ app.use(function(req, res, next) {
   res.locals.error = req.flash('error');
   next();
 });
+
+app.use(express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
+
 //------------ Routes ------------//
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
