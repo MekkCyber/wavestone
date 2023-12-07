@@ -48,7 +48,7 @@ def crack_passwords(passwords, cracker):
 def main():
     url = input("Enter Target Url: ")
     error = "Password incorrect! Please try again."
-    username="mohamed.mekkouri@student-cs.fr"
+    username="adrien.peccenini@student-cs.fr"
     cracker = BruteForceCracker(url, username, error)
     
     with open("passwords.txt", "r") as f:
