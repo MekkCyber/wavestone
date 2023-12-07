@@ -11,7 +11,7 @@ const authController = require('../controllers/authController')
 
 //-------------- Images --------------//
 
-//router.get('/attack_utils/images_dirs', express.static(path.join(__dirname, '..', 'attack_utils', 'images_dirs')));
+//router.get('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
 
 //------------ Login Route ------------//
 router.get('/login', (req, res) => {

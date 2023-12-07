@@ -47,7 +47,7 @@
                                 <% const randomFiles = imagePaths[randomIndex].files; %>
                                 <%console.log("Randome file :", randomFiles)%>
                                 <% const randomImageName = randomFiles[Math.floor(Math.random() * randomFiles.length)]; %>
-                                <img src="./attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
+                                <img src="/attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
                             <% } %>
                           </div>
                           
