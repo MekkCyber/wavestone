@@ -51,7 +51,11 @@ app.use(function(req, res, next) {
   next();
 });
 
+<<<<<<< HEAD
 app.use('/attack_utils/images_dirs',express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
+=======
+app.use('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
+>>>>>>> 36e80977c2f3de308054da43b666b6e8fb2cdb7b
 
 //------------ Routes ------------//
 app.use('/', require('./routes/index'));
