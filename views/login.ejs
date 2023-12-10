@@ -8,7 +8,7 @@
                 Login
             </h2>
             <%- include ("./messages") %>
-                <form action="/auth/login" method="POST">
+                <form action="/auth/login" method="POST" onsubmit="return validateCaptcha()">
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email" />
@@ -34,15 +34,16 @@
                                 margin-bottom: 20px;
                             }                    
                             #randomImages img {
-                                width: 100%;
+                                width: 30%;
                                 height: auto;
                                 display: block;
-                                margin: 0px -5% 0px -5%;
+                                margin-left: -5%;
+                                margin-right: -5%;
                             }
                         </style>                       
 
                         <label for="captcha">Captcha</label>
-                        <div id="randomImages">
+                        <div id="randomImages"> 
                             <% let captcha_value = 0;%>
                             <%function shiftAndAddDigit(value, newDigit) {%>
                                 <%return (value*10 + newDigit);%>
@@ -60,7 +61,7 @@
                           
                     </div>
                     <div class="form-group captcha">
-                        <label for="user_captcha_input">Enter a 4-digit number:</label>
+                        <label for="form-group captcha">Enter a 4-digit number:</label>
                         <input type="text" id="user_captcha_input" maxlength="4" oninput="validateInput(this)" pattern="\d{4}" title="Please enter a 4-digit number">                         
                     </div>
 
@@ -73,15 +74,24 @@
                     </style>
                     <script>
                         function validateInput(input) {
-                          input.value = input.value.replace(/\D/g, '');
-                          if (/^\d{4}$/.test(input.value)) {
-                            input.setCustomValidity('');
-                          } else {
-                            input.setCustomValidity('Please enter a 4-digit number');
-                          }
+                            input.value = input.value.replace(/\D/g, '');
+                            if (input.value.trim() === '') {
+                                input.setCustomValidity('Please enter a 4-digit number');
+                                enableSubmitButton(false);
+                            } else if (/^\d{4}$/.test(input.value)) {
+                              input.setCustomValidity('');
+                              enableSubmitButton(true);
+                            } else {
+                              input.setCustomValidity('Please enter a 4-digit number');
+                              enableSubmitButton(false);
+                            }
+                        }
+                        function enableSubmitButton(enable) {
+                            var submitButton = document.querySelector('button[type="submit"]');
+                            submitButton.disabled = !enable;
                         }
                     </script>
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <button type="submit" class="btn btn-primary btn-block" disabled>Login</button>
 
                 </form>
                 <p class="mt-4">
@@ -93,32 +103,44 @@
         </div>
     </div>
     <script>
-        document.querySelector("#id-checkbox").addEventListener('DOMContentLoaded', function () {
-            const captchaSquare = document.getElementById('captchaSquare');
-            const captchaAnswerInput = document.getElementById('captchaAnswer');
-            const colors = ['red', 'blue'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            captchaSquare.style.backgroundColor = randomColor;
-            captchaAnswerInput.value = randomColor;
+        document.addEventListener('DOMContentLoaded', function () {
+            // Reset the value inside the input field
+            var captchaInput = document.getElementById('user_captcha_input');
+            if (captchaInput) {
+              captchaInput.value = '';
+            }
 
-            captchaSquare.addEventListener('click', function () {
-                const clickedColor = captchaSquare.style.backgroundColor;
+            var urlParams = new URLSearchParams(window.location.search);
+            var incorrectCaptcha = urlParams.get('incorrectCaptcha');
 
-                if (clickedColor === randomColor) {
-                    alert('CAPTCHA solved! You clicked the right color.');
-                } else {
-                    alert('Incorrect! Please try again.');
-                }
-            });
+            if (incorrectCaptcha === 'true') {
+            // Inform the user about the incorrect captcha
+                captchaInput.setCustomValidity("Incorrect Captcha");
+            }
+        
+            // Disable the submit button on page load
+            enableSubmitButton(false);
         });
-        document.querySelector("button").addEventListener(
-            "click",
-            function (event) {
-                console.log("Désolé ! preventDefault() ne vous laissera pas cocher ceci.");
-                event.preventDefault();
-            },
-            false,
-        );
+        function validateCaptcha() {
+            var captchaInput = document.getElementById('user_captcha_input');
+            var captchaValue = <%= captcha_value %>; // Get the server-side constant value
+
+            // Check if the input value is equal to the constant captcha_value
+            if (captchaInput.value.trim() === captchaValue.toString()) {
+                console.log("bon");
+                captchaInput.setCustomValidity('');
+                enableSubmitButton(true);
+                return true; // Allow form submission
+            } else {
+                console.log("Mauvais")
+                enableSubmitButton(false);
+                window.location.reload();
+                var url = window.location.href + '?incorrectCaptcha=true';
+                window.location.href = url;
+                return false; // Prevent form submission
+            }
+        }
+
     </script>
 
 </div>
