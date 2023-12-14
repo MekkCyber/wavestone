@@ -57,7 +57,9 @@ def retrieve_captcha_images(url) :
             div_tag = soup.find('div', id='randomImages')
             
             if div_tag:
+                #je récupère ici juste le champ src de la balise (ie l'url de l'image)
                 link = div_tag.img.get("src")
+                #je stocke dans une liste d'url
                 img_url.append(link)
                 print(div_tag)
 
@@ -66,7 +68,7 @@ def retrieve_captcha_images(url) :
             
         else:
             print("Failed to retrieve data. Status code:", response.status_code)
-
+    #je parcours la liste d'url, et je récupère l'image que je mets quelque part 
     for i in range (len(img_url)):
         img_url[i] = "http://localhost:3006"+img_url[i]
         response = requests.get(img_url[i])
