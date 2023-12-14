@@ -75,9 +75,7 @@ def retrieve_captcha_images(url) :
             image = Image.open(response.raw)
             stock_image.append(image)
             pixels = list(image.getdata())
-            print(pixels[307199][0])
-            break
-            print(stock_image)
+            stock_image.append(pixels)
 
         else : 
             print("error response")
