@@ -10,6 +10,34 @@ np.random.seed(seed)
 tf.random.set_seed(seed)
 
 #choix base de données
+def get_dataset_tf(batch_size=128) : 
+    (ds_train, ds_val, ds_test), ds_info = tfds.load(
+        'mnist',
+        split=['train[10%:70%]','train[70%:]', 'test'],
+        shuffle_files=True,
+        as_supervised=True,
+        with_info=True,
+    )
+
+    def normalize_img(image, label):
+        return tf.cast(image, tf.float32) / 255., label
+
+    ds_train = ds_train.map(
+        normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
+    ds_train = ds_train.cache()
+    ds_train = ds_train.batch(batch_size)
+    ds_train = ds_train.prefetch(tf.data.AUTOTUNE)
+
+    ds_val = ds_val.map(
+        normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
+    ds_val = ds_val.cache()
+    ds_val = ds_val.batch(batch_size)
+    ds_val = ds_val.prefetch(tf.data.AUTOTUNE)
+
+    ds_test = ds_test.map(normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
+    ds_test = ds_test.cache().batch(32).prefetch(tf.data.AUTOTUNE)
+    return ds_train, ds_val, ds_test
+
 def get_dataset(batch_size=128) : 
     (ds_train, ds_val, ds_test), ds_info = tfds.load(
         'mnist',
@@ -37,6 +65,10 @@ def get_dataset(batch_size=128) :
     ds_test = ds_test.map(normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
     ds_test = ds_test.cache().batch(32).prefetch(tf.data.AUTOTUNE)
     return ds_train, ds_val, ds_test
+
+
+
+
 
 def create_model() : 
     model_conv = tf.keras.models.Sequential([

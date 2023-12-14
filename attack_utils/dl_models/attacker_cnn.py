@@ -36,7 +36,6 @@ def create_model() :
 
 def train(model_conv, ds_train, ds_val, batch_size=128, epochs=20) : 
     checkpoint_path = "checkpoints/labeler/training_1/cp-{epoch:02d}.ckpt"
-    n_batches = len(ds_train) // batch_size
 
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
@@ -49,9 +48,3 @@ def train(model_conv, ds_train, ds_val, batch_size=128, epochs=20) :
         validation_data = ds_val,
         callbacks=[cp_callback]
     )
-
-
-if __name__ == "__main__" : 
-  ds_train, ds_val, ds_test = get_dataset()
-  model = create_model()
-  train(model, ds_train, ds_val)
