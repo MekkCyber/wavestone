@@ -6,8 +6,16 @@ const User = require('../models/User');
 
 module.exports = function (passport) {
     passport.use(
-        new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+        new LocalStrategy({ usernameField: 'email', passReqToCallback: true }, (req, email, password, done) => {
             //------------ User Matching ------------//
+            const storedCaptcha = req.body.captcha_value; // Retrieve the captcha value from the form
+            const enteredCaptcha = req.body.captcha_input; // Get the stored captcha value from the session
+            console.log(storedCaptcha)
+            console.log(enteredCaptcha)
+            // Check if the entered captcha matches the stored captcha
+            if (enteredCaptcha !== storedCaptcha || !enteredCaptcha) {
+                return done(null, false, { message: 'Captcha incorrect! Please try again.' });
+            }
             User.findOne({
                 email: email
             }).then(user => {

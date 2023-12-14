@@ -8,6 +8,7 @@ seed = 42
 np.random.seed(seed)
 tf.random.set_seed(seed)
 
+
 def create_model() : 
     model_conv = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(8, 3, padding="same", activation = "relu", input_shape=(28,28,1)),
@@ -24,6 +25,7 @@ def create_model() :
         tf.keras.layers.Dense(10)
     ])
 
+
     model_conv.compile(
         optimizer = tf.keras.optimizers.Adam(0.001),
         loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
@@ -34,17 +36,15 @@ def create_model() :
 
 
 
-def train(model_conv, ds_train, ds_val, batch_size=128, epochs=20) : 
-    checkpoint_path = "checkpoints/labeler/training_1/cp-{epoch:02d}.ckpt"
+def train(model_conv, ds_train, ds_val=None, epochs=20) : 
+    checkpoint_path = "checkpoints/attacker/training_1/cp-{epoch:02d}.ckpt"
 
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-                                                    save_weights_only=True,
-                                                    save_best_only=True,
-                                                    verbose=1)
-
+    # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+    #                                                 save_weights_only=True,
+    #                                                 verbose=1)
     model_conv.fit(
         ds_train,
         epochs = epochs,
-        validation_data = ds_val,
-        callbacks=[cp_callback]
     )
+
+    return model_conv

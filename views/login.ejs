@@ -57,13 +57,13 @@
                                 <% const randomImageName = randomFiles[Math.floor(Math.random() * randomFiles.length)]; %>
                                 <img src="/attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
                             <% } %>
-                          </div>
-                          
+                          </div>     
                     </div>
                     <div class="form-group captcha">
                         <label for="form-group captcha">Enter a 4-digit number:</label>
-                        <input type="text" id="user_captcha_input" maxlength="4" oninput="validateInput(this)" pattern="\d{4}" title="Please enter a 4-digit number">                         
+                        <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput(this)" pattern="\d{4}" title="Please enter a 4-digit number">                         
                     </div>
+                    <input type="hidden" name="captcha_value" value="<%= captcha_value %>">
 
                     <style>
                         .captcha {
@@ -105,7 +105,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Reset the value inside the input field
-            var captchaInput = document.getElementById('user_captcha_input');
+            var captchaInput = document.getElementById('captcha_input');
             if (captchaInput) {
               captchaInput.value = '';
             }
@@ -122,7 +122,8 @@
             enableSubmitButton(false);
         });
         function validateCaptcha() {
-            var captchaInput = document.getElementById('user_captcha_input');
+            return true
+            var captchaInput = document.getElementById('captcha_input');
             var captchaValue = <%= captcha_value %>; // Get the server-side constant value
 
             // Check if the input value is equal to the constant captcha_value

