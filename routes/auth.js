@@ -24,8 +24,18 @@ router.get('/login', (req, res) => {
         files,
       };
     });
-  
-    res.render('login', { imagePaths });
+    // function shiftAndAddDigit(value, newDigit) {
+    //   return (value*10 + newDigit);
+    // }
+    // captcha_value = 0
+    // for (i = 0; i<4; i++){
+    //   random =Math.floor(Math.random() * imageFolders.length)
+    //   captcha_value = shiftAndAddDigit(captcha_value, random)
+    // }
+    captcha_value = Math.floor(1000 + Math.random() * 9000);
+    captcha_value = captcha_value.toString();
+    fs.writeFileSync('captcha.txt', captcha_value)
+    res.render('login', { imagePaths, captcha_value});
 });
 
 

