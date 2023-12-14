@@ -16,7 +16,7 @@ import sys
 from label import label
 from dl_models import attacker_cnn
 from bs4 import BeautifulSoup
-
+from PIL import Image
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message):
@@ -49,33 +49,39 @@ def crack_passwords(passwords, cracker):
         if cracker.crack(password):
             return
 def retrieve_captcha_images(url) : 
+    img_url = []
     for _ in range(10) : 
-        img_url = []
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             div_tag = soup.find('div', id='randomImages')
-            
             if div_tag:
+                #je récupère ici juste le champ src de la balise (ie l'url de l'image)
                 link = div_tag.img.get("src")
+                #je stocke dans une liste d'url
                 img_url.append(link)
-                print(div_tag)
 
             else:
                 print("Div tag not found.")
             
         else:
             print("Failed to retrieve data. Status code:", response.status_code)
-
+    #je parcours la liste d'url, et je récupère l'image que je mets quelque part 
+    stock_image = []
     for i in range (len(img_url)):
         img_url[i] = "http://localhost:3006"+img_url[i]
-        response = requests.get(img_url[i])
-        chemin_local = "image.jpg"
+        response = requests.get(img_url[i], stream = True)
         if response.status_code ==200:
-            with open(chemin_local, "wb") as f:
-                f.write(response.content)
-    print(img_url)
+            image = Image.open(response.raw)
+            stock_image.append(image)
+            pixels = list(image.getdata())
+            print(pixels[307199][0])
+            break
+            print(stock_image)
 
+        else : 
+            print("error response")
+    print(stock_image)
 
 
 def main():
