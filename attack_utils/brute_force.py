@@ -1,13 +1,13 @@
-# print (""" 
+print (""" 
 
-# ██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
-# ██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-# ██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
-# ██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-# ██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████                                                            
+██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
+██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
+██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████                                                            
                                                                             
-#                         Wavestone POC attack
-# """)
+                        Wavestone POC attack
+""")
 
 import threading
 import requests
@@ -99,7 +99,7 @@ def main():
     username="mohamed.mekkouri@student-cs.fr"
 
     ###################### Captcha ##########################
-    captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login")
+    captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=200)
     tfds_captcha_images = convert_to_tfds(captcha_images)
     predictions = label(tfds_captcha_images)
     attacker_dataset = convert_to_tfds(captcha_images, predictions)
