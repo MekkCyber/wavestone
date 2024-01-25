@@ -14,7 +14,7 @@ def generate_captcha():
     captcha = ImageCaptcha()
 
     # Generate the captcha image
-    captcha_image = captcha.generate(captcha_text)
+    #captcha_image = captcha.generate(captcha_text)
 
     # Save the captcha image to a file
     folder_path = 'generated_captchas'
