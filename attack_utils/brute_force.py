@@ -96,10 +96,10 @@ def retrieve_captcha_images(url, number_iter=300) :
 def main():
     url = "http://localhost:3006/auth/login"
     error = "Password incorrect! Please try again."
-    username="mohamed.mekkouri@student-cs.fr"
+    username="test@test.test"
 
     ###################### Captcha ##########################
-    captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=200)
+    captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
     tfds_captcha_images = convert_to_tfds(captcha_images)
     predictions = label(tfds_captcha_images)
     attacker_dataset = convert_to_tfds(captcha_images, predictions)
