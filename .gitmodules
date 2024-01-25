@@ -1,0 +1,3 @@
+[submodule "attack_utils/attack_utils/captcha_image_preprocess"]
+	path = attack_utils/attack_utils/captcha_image_preprocess
+	url = https://github.com/alstjgg/captcha_image_preprocess.git
