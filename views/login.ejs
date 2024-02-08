@@ -1,3 +1,64 @@
+<div class="custom-container">
+    <h3 class="title">Lab parameters</h3>
+    <div class="selector-container" style="--num-selectors: 3;">
+        
+        <select id="captchaMethod" name="captchaSelector">
+            <option value="MNIST">MNIST (only digits)</option>
+            <option value="EMNIST">EMNIST (digits and letter)</option>
+            <option value="Python">Python Captcha</option>
+        </select>
+        <select>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+        </select>
+        <select>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+        </select>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the selected captcha type from the query parameters in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const captchaType = urlParams.get('captchaType');
+    
+        // Set the selected option in the captcha selector
+        const captchaSelector = document.getElementById('captchaMethod');
+        if (captchaSelector) {
+            // Iterate over options and set the selected attribute for the corresponding captcha type
+            Array.from(captchaSelector.options).forEach(option => {
+                if (option.value === captchaType) {
+                    option.selected = true;
+                }
+            });
+        }
+    
+        // Add event listener to reload the page when captcha selector changes
+        captchaSelector.addEventListener('change', function() {
+            const selectedCaptchaType = this.value;
+            window.location.href = '/auth/login?captchaType=' + selectedCaptchaType;
+        });
+    
+        // Get all other selectors
+        const selectors = document.querySelectorAll('.selector-container select:not(#captchaMethod)');
+    
+        // Add event listener to reload the page when any other selector changes
+        selectors.forEach(selector => {
+            selector.addEventListener('change', function() {
+                // No need to capture captchaType here
+                window.location.reload();
+            });
+        });
+    });
+    </script>
+
+
+
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
         <div class="card card-body text-center">
@@ -19,26 +80,7 @@
                             placeholder="Enter Password" />
                     </div>
                     <div class="form-group captcha">
-                        <style>
-                            img {
-                                border: none;
-                            }
-                            #randomImages {
-                                width: 60%;
-                                height: 60%;
-                                overflow: hidden;
-                                display: flex;
-                                justify-content: space-between;
-                                margin-bottom: 20px;
-                            }                    
-                            #randomImages img {
-                                width: 30%;
-                                height: auto;
-                                display: block;
-                                margin-left: -5%;
-                                margin-right: -5%;
-                            }
-                        </style>                       
+                                               
 
                         <label for="captcha">Captcha</label>
                         <div id="randomImages"> 
@@ -58,19 +100,11 @@
                           </div>  
                     </div>
                     <div class="form-group captcha">
-                        <label for="form-group captcha">Enter a 4-digit number:</label>
+                        <label for="form-group captcha">Enter the above characters :</label>
                         <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput(this)" pattern="\d{4}" title="Please enter a 4-digit number">                         
                     </div>
                     <input type="hidden" name="captcha_value" value="<%= captcha_value %>">
 
-                    <style>
-                        .captcha {
-                            display: flex;
-                            gap: 50px;
-                            justify-content: center;
-                            align-items: center;
-                        }
-                    </style>
                     <script>
                         function validateInput(input) {
                             input.value = input.value.replace(/\D/g, '');
@@ -142,5 +176,6 @@
         }
 
     </script>
+    
 
 </div>

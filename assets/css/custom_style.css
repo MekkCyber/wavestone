@@ -1,0 +1,67 @@
+img {
+    border: none;
+}
+
+
+
+#randomImages {
+    width: 60%;
+    height: 60%;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}                    
+#randomImages img {
+    width: 30%;
+    height: auto;
+    display: block;
+    margin-left: -5%;
+    margin-right: -5%;
+}
+.captcha {
+    display: flex;
+    gap: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+.custom-container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center; /* Center-align the content */
+    background-color: #344B63;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+}
+
+.title {
+    text-align: center;
+    margin-top: 0%;
+    margin-bottom: 3%; /* Add margin below the title */
+}
+
+.selector-container {
+    display: flex;
+    left: 50%;
+    justify-content: space-between; /* Distribute space between selectors */
+    width: 80%; /* Set the width of the container */
+    margin: 0 auto; /* Center align the container */
+}
+
+.selector-container select {
+    width: calc(100% / var(--num-selectors) - 10px); /* Calculate width for each selector *
+    /* Subtract 10px for margin and padding */
+}
+
+
+.selector-container h3 {
+    margin-bottom: 10px;
+}

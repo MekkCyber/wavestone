@@ -15,7 +15,9 @@ const authController = require('../controllers/authController')
 
 //------------ Login Route ------------//
 router.get('/login', (req, res) => {
-    const imageFolders = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const imageFolders = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 
+    'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     const imagePaths = imageFolders.map(folder => {
       const folderPath = path.join(__dirname, '..', 'attack_utils', 'images_dirs', folder);
       const files = fs.readdirSync(folderPath);
@@ -24,19 +26,34 @@ router.get('/login', (req, res) => {
         files,
       };
     });
-    // function shiftAndAddDigit(value, newDigit) {
-    //   return (value*10 + newDigit);
-    // }
-    // captcha_value = 0
-    // for (i = 0; i<4; i++){
-    //   random =Math.floor(Math.random() * imageFolders.length)
-    //   captcha_value = shiftAndAddDigit(captcha_value, random)
-    // }
+
+    const captchaType = req.query.captchaType
+    let captcha_value;
+    //default value is MNIST
     captcha_value = Math.floor(1000 + Math.random() * 9000);
+    if (captchaType ===   'MNIST') {
+      captcha_value = Math.floor(1000 + Math.random() * 9000);
+    }
+    else if (captchaType === 'EMNIST'){
+      captcha_value = generateRandomString(8);
+    }
+    else if (captchaType === 'Python') {
+      captcha_value = Math.floor(1000 + Math.random() * 9000);
+    }
+    
     captcha_value = captcha_value.toString();
     fs.writeFileSync('captcha.txt', captcha_value)
-    res.render('login', { imagePaths, captcha_value});
+    res.render('login', { imagePaths, captcha_value, captchaType});
 });
+
+function generateRandomString(length) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+  for (let i = 0; i < length; i++) {
+      randomString += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return randomString;
+}
 
 
 
