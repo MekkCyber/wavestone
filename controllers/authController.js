@@ -314,9 +314,11 @@ exports.resetPassword = (req, res) => {
 
 //------------ Login Handle ------------//
 exports.loginHandle = (req, res, next) => {
+    console.log(req.body);
+    var url = req.body.lab_state !=''?'/auth/login?captchaType='+req.body.lab_state:'/auth/login';
     passport.authenticate('local', {
         successRedirect: '/dashboard',
-        failureRedirect: '/auth/login',
+        failureRedirect: url,
         failureFlash: true
     })(req, res, next);
 }
