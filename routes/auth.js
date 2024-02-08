@@ -35,7 +35,7 @@ router.get('/login', (req, res) => {
       captcha_value = Math.floor(1000 + Math.random() * 9000);
     }
     else if (captchaType === 'EMNIST'){
-      captcha_value = generateRandomString(8);
+      captcha_value = generateRandomString(4);
     }
     else if (captchaType === 'Python') {
       captcha_value = Math.floor(1000 + Math.random() * 9000);
