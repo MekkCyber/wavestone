@@ -11,7 +11,7 @@ import sklearn.metrics as metrics
 
 import cv2 
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
+import plotly.graph_objects 
 from plotly.subplots import make_subplots
 import plotly.express as p
 import seaborn as sns
