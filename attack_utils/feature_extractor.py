@@ -116,15 +116,15 @@ def feature_extraction_diagrams(image) :
             latest_non_zero = i
 
 # Load the image
-image = cv2.imread('generated_captchas/Ga7B.jpeg')
+def test_feature_extractor() :
+    image = cv2.imread('generated_captchas/49Fz.jpeg')
 
-# Call the function
-characters = feature_extraction(image)
-for index, character in enumerate(characters) : 
-    thresh = cv2.bitwise_not(character)
-    cv2.imwrite(f'characters/character_{index}.jpg', thresh)
+    # Call the function
+    characters = feature_extraction(image)
+    for index, character in enumerate(characters) : 
+        cv2.imwrite(f'characters/character_{index}.jpg', character)
 
-
+#test_feature_extractor()
 # def test(histogram) : 
 #     intervals = []
 #     for i in range(1, w) : 
@@ -140,3 +140,22 @@ for index, character in enumerate(characters) :
 # w = len(I3[0])
 # histogram = sum(I3)
 # print(test(histogram))
+        
+
+def read_character() :
+    for i in range(4) : 
+
+        character = cv2.imread(f'characters/character_{i}.jpg')
+        print(character.shape)
+        resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+        cv2.imshow('Image', resized_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        print(resized_image.shape)
+read_character()
+
+def read_eminst() : 
+    character = cv2.imread(f'tmp_emnist/a/6a9fd758-c75a-11ee-9e7d-e0d045d9590d.png')
+    print(character.shape)
+
+read_eminst()

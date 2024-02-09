@@ -11,7 +11,7 @@ def generate_captcha(width=500, height=150, number_characters=4):
     captcha_text = ''.join(random.choice(characters) for _ in range(number_characters))  # You can adjust the length as needed
 
     # Create an ImageCaptcha object
-    captcha = ImageCaptcha(fonts=['fonts/Roboto-Bold.ttf'], 
+    captcha = ImageCaptcha(fonts=['fonts/Roboto-Light.ttf'], 
                            font_sizes=(100,100),
                            width=width, 
                            height=height, 
