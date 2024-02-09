@@ -122,7 +122,8 @@ def test_feature_extractor() :
     # Call the function
     characters = feature_extraction(image)
     for index, character in enumerate(characters) : 
-        cv2.imwrite(f'characters/character_{index}.jpg', character)
+        resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+        cv2.imwrite(f'characters/character_{index}.jpg', resized_image)
 
 #test_feature_extractor()
 # def test(histogram) : 
@@ -147,15 +148,10 @@ def read_character() :
 
         character = cv2.imread(f'characters/character_{i}.jpg')
         print(character.shape)
-        resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
-        cv2.imshow('Image', resized_image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        print(resized_image.shape)
 read_character()
 
-def read_eminst() : 
-    character = cv2.imread(f'tmp_emnist/a/6a9fd758-c75a-11ee-9e7d-e0d045d9590d.png')
-    print(character.shape)
+# def read_eminst() : 
+#     character = cv2.imread(f'tmp_emnist/a/6a9fd758-c75a-11ee-9e7d-e0d045d9590d.png')
+#     print(character.shape)
 
-read_eminst()
+# read_eminst()
