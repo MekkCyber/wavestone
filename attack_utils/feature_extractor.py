@@ -5,7 +5,7 @@ def feature_extraction(I, num_chars=4):
     I1 = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
     I2 = cv2.GaussianBlur(I1, (0, 0), 2)
     _, I3 = cv2.threshold(I2, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    print(sum(I3))
+    #print(sum(I3))
     # EROSION
     # kernel = np.ones((8, 8), np.uint8)
     # I3 = cv2.erode(I3, kernel, iterations=1)
@@ -116,7 +116,7 @@ def feature_extraction_diagrams(image) :
             latest_non_zero = i
 
 # Load the image
-image = cv2.imread('generated_captchas/pRHy.jpeg')
+image = cv2.imread('generated_captchas/Ga7B.jpeg')
 
 # Call the function
 characters = feature_extraction(image)
@@ -125,18 +125,18 @@ for index, character in enumerate(characters) :
     cv2.imwrite(f'characters/character_{index}.jpg', thresh)
 
 
-def test(histogram) : 
-    intervals = []
-    for i in range(1, w) : 
-        if histogram[i] == 0 and histogram[i-1] != 0 :
-            intervals.append((latest_non_zero, i))
-        if histogram[i] != 0 and histogram[i-1] == 0 : 
-            latest_non_zero = i
-    return intervals
+# def test(histogram) : 
+#     intervals = []
+#     for i in range(1, w) : 
+#         if histogram[i] == 0 and histogram[i-1] != 0 :
+#             intervals.append((latest_non_zero, i))
+#         if histogram[i] != 0 and histogram[i-1] == 0 : 
+#             latest_non_zero = i
+#     return intervals
 
-I1 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-I2 = cv2.GaussianBlur(I1, (0, 0), 2)
-_, I3 = cv2.threshold(I2, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-w = len(I3[0])
-histogram = sum(I3)
-print(test(histogram))
+# I1 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# I2 = cv2.GaussianBlur(I1, (0, 0), 2)
+# _, I3 = cv2.threshold(I2, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+# w = len(I3[0])
+# histogram = sum(I3)
+# print(test(histogram))
