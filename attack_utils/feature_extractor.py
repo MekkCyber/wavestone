@@ -141,7 +141,7 @@ def test_feature_extractor() :
             cv2.imwrite(f'characters/character_{i}.jpg', resized_image)
             i += 1
 
-test_feature_extractor()
+#test_feature_extractor()
 # def test(histogram) : 
 #     intervals = []
 #     for i in range(1, w) : 
