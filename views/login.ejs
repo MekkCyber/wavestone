@@ -84,18 +84,9 @@
                                     <img src="/attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
                                 <%}%>
                             <%} else if (captchaType === 'Python') {%>
-                                <%const referenceList = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';%>
-                                <%function getPosition(char) {%>
-                                    <%return referenceList.indexOf(char);%>
-                                <%}%>
-                                <%for (let i = 0; i < 4; i++) {%>
-                                    <% const random_char = captcha_value[i]; %>
-                                    <% const position = getPosition(random_char);%>
-                                    <% const randomFolder = imagePaths[position].folder; %>
-                                    <% const randomFiles = imagePaths[position].files; %>
-                                    <% const randomImageName = randomFiles[Math.floor(Math.random() * randomFiles.length)]; %>
-                                    <img src="/attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
-                                <%}%>
+                                <% const imagePath = session.python_captcha; %>
+                                <% console.log(imagePath); %>
+                                <img src="/attack_utils/generated_captchas/<%= imagePath %>" alt="Captcha Image">
                             <%} else {%>
                                 <%for (let i = 0; i < 4; i++) {%>
                                     <% const random = captcha_value[i]; %>

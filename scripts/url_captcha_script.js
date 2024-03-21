@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     captchaSelector.addEventListener('change', function() {
         const selectedCaptchaType = this.value;
         if (selectedCaptchaType === 'Python') {
-            fetch('/auth/generateCaptcha')
+            window.location.href = '/auth/generateCaptcha';
             // .then(response => response.text())
             // .then(message => console.log(message))
             // .catch(error => console.error(error))

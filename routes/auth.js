@@ -15,15 +15,17 @@ const authController = require('../controllers/authController')
 router.get('/login', (req, res) => {
     const imageFolders = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 
-    'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'generated_captchas'];
     const imagePaths = imageFolders.map(folder => {
-      const folderPath = path.join(__dirname, '..', 'attack_utils', 'images_dirs', folder);
+      const folderPath = folder === 'generated_captchas' ? 
+                          path.join(__dirname, '..', 'attack_utils', folder) :
+                          path.join(__dirname, '..', 'attack_utils', 'images_dirs', folder);
       const files = fs.readdirSync(folderPath);
       return {
-        folder,
-        files,
+          folder,
+          files,
       };
-    });
+  });
 
     const captchaType = req.query.captchaType
     let captcha_value;
@@ -85,7 +87,9 @@ function generateCaptcha(captchaLength) {
 router.get('/generateCaptcha', async (req, res) => {
   try {
       const imagePath = await generateCaptcha(8);
-      res.redirect(`/login?captchaType=Python`);
+      const clientPath = path.basename(imagePath);
+      req.session.python_captcha = clientPath;
+      res.redirect(`/auth/login?captchaType=Python`);
   } catch (error) {
       res.status(500).send('Error occurred while generating captcha.');
   }

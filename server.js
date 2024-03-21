@@ -5,7 +5,6 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
-const { spawn } = require('child_process');
 
 const app = express();
 
@@ -49,12 +48,13 @@ app.use(function(req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
+  res.locals.session = req.session;
   next();
 });
 
 //------------ Images share ------------//
 app.use('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
-app.use(express.static(path.join(__dirname, 'attack_utils', 'generated_captchas')));
+app.use('/attack_utils/generated_captchas', express.static(path.join(__dirname, 'attack_utils', 'generated_captchas')));
 
 //------------ Scripts share ------------//
 app.use(express.static(path.join(__dirname, 'scripts')));
