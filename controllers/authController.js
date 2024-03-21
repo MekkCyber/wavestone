@@ -335,24 +335,19 @@ exports.logoutHandle = (req, res) => {
 //------------ Generate Captcha ------------//
 const { spawn } = require('child_process');
 
-function generateCaptcha(captchaText) {
-    const pythonProcess = spawn('python', ['../attack_utils/generate_captcha.py', captchaText]);
+function generateCaptcha(captchaLength) {
+    const pythonProcess = spawn('python', ['../attack_utils/generate_captcha.py', captchaLength]);
 
     pythonProcess.stdout.on('data', (data) => {
         const imagePath = data.toString().trim();
         console.log(`Captcha image generated at: ${imagePath}`);
-        // Here you can do further processing, like sending the image path to the client
     });
 
     pythonProcess.stderr.on('data', (data) => {
         console.error(`Error occurred: ${data}`);
-        // Handle errors here
     });
 
     pythonProcess.on('close', (code) => {
         console.log(`Child process exited with code ${code}`);
     });
 }
-
-// Call this function with the captcha text
-generateCaptcha('your_captcha_text_here');
