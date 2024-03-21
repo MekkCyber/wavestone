@@ -52,6 +52,8 @@ app.use(function(req, res, next) {
 });
 
 app.use('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
+app.use(express.static(path.join(__dirname, 'attack_utils', 'generated_captchas')));
+app.use(express.static(path.join(__dirname, 'scripts')));
 
 //------------ Routes ------------//
 app.use('/', require('./routes/index'));

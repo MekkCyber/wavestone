@@ -40,41 +40,7 @@
 </div>
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get the selected captcha type from the query parameters in the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const captchaType = urlParams.get('captchaType');
-    
-        // Set the selected option in the captcha selector
-        const captchaSelector = document.getElementById('captchaMethod');
-        if (captchaSelector) {
-            // Iterate over options and set the selected attribute for the corresponding captcha type
-            Array.from(captchaSelector.options).forEach(option => {
-                if (option.value === captchaType) {
-                    option.selected = true;
-                }
-            });
-        }
-    
-        // Add event listener to reload the page when captcha selector changes
-        captchaSelector.addEventListener('change', function() {
-            const selectedCaptchaType = this.value;
-            window.location.href = '/auth/login?captchaType=' + selectedCaptchaType;
-        });
-    
-        // Get all other selectors
-        const selectors = document.querySelectorAll('.selector-container select:not(#captchaMethod)');
-    
-        // Add event listener to reload the page when any other selector changes
-        selectors.forEach(selector => {
-            selector.addEventListener('change', function() {
-                // No need to capture captchaType here
-                window.location.reload();
-            });
-        });
-    });
-</script>
+<script type="text/javascript" src="/url_captcha_script.js"></script>
 
 
 
@@ -212,47 +178,7 @@
                 </p>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Reset the value inside the input field
-            var captchaInput = document.getElementById('captcha_input');
-            if (captchaInput) {
-              captchaInput.value = '';
-            }
-
-            var urlParams = new URLSearchParams(window.location.search);
-            var incorrectCaptcha = urlParams.get('incorrectCaptcha');
-
-            if (incorrectCaptcha === 'true') {
-            // Inform the user about the incorrect captcha
-                captchaInput.setCustomValidity("Incorrect Captcha");
-            }
-        
-            // Disable the submit button on page load
-            enableSubmitButton(false);
-        });
-        function validateCaptcha() {
-            return true
-            var captchaInput = document.getElementById('captcha_input');
-            var captchaValue = <%= captcha_value %>; // Get the server-side constant value
-
-            // Check if the input value is equal to the constant captcha_value
-            if (captchaInput.value.trim() === captchaValue.toString()) {
-                console.log("bon");
-                captchaInput.setCustomValidity('');
-                enableSubmitButton(true);
-                return true; // Allow form submission
-            } else {
-                console.log("Mauvais")
-                enableSubmitButton(false);
-                window.location.reload();
-                var url = window.location.href + '?incorrectCaptcha=true';
-                window.location.href = url;
-                return false; // Prevent form submission
-            }
-        }
-
-    </script>
+    <script type="text/javascript" src="/scripts/check_captcha.js"></script>
     
 
 </div>
