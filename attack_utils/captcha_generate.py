@@ -1,9 +1,10 @@
+import sys
 from captcha.image import ImageCaptcha
 import random
 import string
 import os
 
-def generate_captcha(width=500, height=150, number_characters=4):
+def generate_captcha(number_characters=4, width=500, height=150):
     # Set the captcha characters
     characters = string.ascii_letters + string.digits
 
@@ -31,5 +32,13 @@ def generate_captcha(width=500, height=150, number_characters=4):
     print(f'Captcha image saved to: {captcha_image_file}')
 
 if __name__ == "__main__":
-    for i in range(10) :    
-        generate_captcha()
+    # Extract the captcha text from command line arguments
+    try :
+        captcha_length = int(sys.argv[1])
+    except:
+        captcha_length = None
+
+    if captcha_length:
+        generate_captcha(captcha_length)
+    else:
+        print("Captcha text not provided.")
