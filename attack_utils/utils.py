@@ -14,3 +14,14 @@ def convert_to_tfds(data, labels=None, batch_size=8) :
         ds = ds.map(normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
         ds = ds.cache().batch(batch_size).prefetch(tf.data.AUTOTUNE)
     return ds
+
+def label_to_chr_emnist(arr) : 
+    result = []
+    for elt in arr : 
+        if elt <= 9 : 
+            result.append(elt.numpy())
+        elif elt < 36 : 
+            result.append(chr(elt - 10 + ord('A')))
+        else : 
+            result.append(chr(elt - 36 + ord('a')))
+    return result

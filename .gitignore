@@ -1,2 +1,3 @@
 node_modules
 attack_utils/checkpoints
+attack_utils/dl_models/checkpoints/

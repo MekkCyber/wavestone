@@ -1,58 +1,14 @@
 import numpy as np
-#
 import pandas as pd
 import tensorflow as tf
-#
-from sklearn.metrics import accuracy_score,f1_score,ConfusionMatrixDisplay,confusion_matrix
 from keras.utils import to_categorical
-#import np_utils ou from keras.utils import np_utils
-import np_utils
-import sklearn.metrics as metrics
 
-import cv2 
 import matplotlib.pyplot as plt
-import plotly.graph_objects 
-from plotly.subplots import make_subplots
-import plotly.express as p
-import seaborn as sns
 
-import time
-from tensorflow import keras
-from keras.models import Sequential, load_model
-from keras.callbacks import EarlyStopping
-from keras import layers
 from keras.layers import *
-from keras.layers import Dense,Conv2D,Flatten,Dropout,MaxPooling2D
-from keras.losses import CategoricalCrossentropy
-from keras.optimizers import Adam
-from tensorflow.keras import callbacks
-from tensorflow.keras.callbacks import EarlyStopping
-#from tensorflow.keras import backend as K
 
 from emnist import extract_training_samples
 from emnist import extract_test_samples
-from tensorflow.keras.models import load_model
-# #print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
-
-# # print("Number of training examples:", len(x_train))
-# # print("Number of test examples:", len(x_test))
-# # print("Image dimensions:", x_train[0].shape)
-# # print("Number of classes:", len(np.unique(y_train)))
-
-# #on normalise
-
-# x_train=x_train/255
-# x_test=x_test/255
-
-# #array NumPy
-# x_train = np.array(x_train).reshape(-1, 28, 28, 1)
-# x_test =  np.array(x_test).reshape(-1, 28, 28, 1)
-# print(x_train.shape)
-# print(x_test.shape)
-
-#encodage one-hot : permet de représenter chaque classe comme vecteur binaire distinct
-#(0,0,1,0,...,0) par exemple est le vecteur binaire associé au label 3
-# y_train = to_categorical(y_train)
 
 TRAIN_SPLIT = 0.6
 VAL_SPLIT = 0.8
@@ -67,10 +23,9 @@ def get_dataset_keras(batch_size=128) :
     val_images = train_images_raw[int(len(train_images_raw)*TRAIN_SPLIT):int(len(train_images_raw)*VAL_SPLIT)]
     val_labels = train_labels_raw[int(len(train_labels_raw)*TRAIN_SPLIT):int(len(train_labels_raw)*VAL_SPLIT)]
 
-    #encodage one-hot : permet de représenter chaque classe comme vecteur binaire distinct
-    #(0,0,1,0,...,0) par exemple est le vecteur binaire associé au label 3
-    train_labels = to_categorical(train_labels)
-    val_labels = to_categorical(val_labels)
+    # train_labels = to_categorical(train_labels)
+    # val_labels = to_categorical(val_labels)
+    # test_labels = to_categorical(test_labels)
     
     def normalize_img(image, label):
         return tf.cast(image, tf.float32) / 255., label
@@ -95,50 +50,88 @@ def get_dataset_keras(batch_size=128) :
 
     return ds_train, ds_val, ds_test
 
+IMG_SIZE = 32
 
-
-
-
-#CNN process
-
-#K.clear_session()
-
-# Define the model using the functional approach
 def create_model():
-    cnn= Sequential()
-    cnn.add(Conv2D(filters=32, kernel_size=(5,5), padding='same', activation='tanh', input_shape=(28, 28, 1)))
-    cnn.add(MaxPooling2D(strides=2))
-    cnn.add(Conv2D(filters=48, kernel_size=(5,5), padding='same', activation='tanh'))
-    cnn.add(MaxPooling2D( strides=2))
-    cnn.add(Conv2D(filters=64, kernel_size=(5,5), padding='same', activation='tanh'))
-    cnn.add(Flatten())
-    cnn.add(Dense(512, activation='tanh'))
-    cnn.add(Dense(84, activation='tanh'))
-    cnn.add(Dense(62, activation='softmax'))
+    data_augmentation = tf.keras.Sequential([
+        tf.keras.layers.Input(shape=(28, 28, 1)),
+        Resizing(IMG_SIZE, IMG_SIZE),
+        tf.keras.layers.experimental.preprocessing.RandomRotation(0.2),
+    ])
+    # model_conv = tf.keras.models.Sequential([
+    #     data_augmentation,
+    #     # tf.keras.layers.Conv2D(8, 3, padding="same", activation = "relu", input_shape=(28,28,1)),
+    #     # tf.keras.layers.MaxPool2D(2,2),
+    #     # tf.keras.layers.BatchNormalization(),
+    #     # tf.keras.layers.Conv2D(16, 3, padding="same", activation = "relu",),
+    #     # tf.keras.layers.MaxPool2D(2,2),
+    #     # tf.keras.layers.BatchNormalization(),
+    #     # tf.keras.layers.Conv2D(32, 3, padding="same", activation = "relu",),
+    #     # tf.keras.layers.MaxPool2D(2,2),
+    #     # tf.keras.layers.BatchNormalization(),
+    #     # tf.keras.layers.Conv2D(64, 3, padding="same", activation = "relu",),
+    #     # tf.keras.layers.MaxPool2D(2,2),
+    #     # tf.keras.layers.BatchNormalization(),
+    #     # tf.keras.layers.Flatten(),
+    #     # tf.keras.layers.Dense(256, activation = "relu"),
+    #     # tf.keras.layers.Dense(62)
+    #     Conv2D(64, (3, 3), padding='same', activation='relu', input_shape=(28, 28, 1)),
+    #     Conv2D(64, (3, 3), padding='same', activation='relu'),
+    #     MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        
+    #     Conv2D(128, (3, 3), padding='same', activation='relu'),
+    #     Conv2D(128, (3, 3), padding='same', activation='relu'),
+    #     MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        
+    #     Conv2D(256, (3, 3), padding='same', activation='relu'),
+    #     Conv2D(256, (3, 3), padding='same', activation='relu'),
+    #     Conv2D(256, (3, 3), padding='same', activation='relu'),
+    #     MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        
+    #     Flatten(),
+        
+    #     Dense(512, activation='relu'),
+    #     Dropout(0.5),
+    #     Dense(512, activation='relu'),
+    #     Dropout(0.5),
+    #     Dense(62, activation='softmax')
+        
+    # ])
 
-    #optimazer
-    opt=Adam(learning_rate=1e-4)
+    base_model = tf.keras.applications.VGG16(weights='imagenet', include_top=False, input_shape=(32, 32, 3)) 
 
-    cnn.compile(optimizer=opt,
-                   loss='categorical_crossentropy',
-                   metrics=['accuracy'])
+    for layer in base_model.layers:
+        layer.trainable = False
+    model_conv = tf.keras.Sequential([
+        data_augmentation,
+        Conv2D(3, (3, 3), activation='relu', padding='same'),
+        base_model,
+        Flatten(),
+        Dense(512, activation='relu'),
+        Dense(62, activation='softmax')
+    ])
+    
 
-    cnn.summary()
-    return cnn
+    model_conv.compile(
+        optimizer = tf.keras.optimizers.Adam(0.001),
+        loss = tf.keras.losses.SparseCategoricalCrossentropy(),
+        metrics = [tf.keras.metrics.SparseCategoricalAccuracy()]
+    )
 
-def get_model():
-    return  tf.keras.models.load_model("checkpoints/labeler_cnn_emnist/training_2/cp-{epoch:02d}.ckpt")
+    return model_conv
+
+
+
+# def get_model():
+#     return  tf.keras.models.load_model("checkpoints/labeler_cnn_emnist/training_2/cp-{epoch:02d}.ckpt")
 
 
 #keras.utils.plot_model(cnn, "model.png", show_shapes=True)
-def train(model_conv, ds_train, ds_val, batch_size=128, epochs=2):
-    checkpoint_path = "checkpoints/labeler_cnn_emnist/training_2/cp-{epoch:02d}.ckpt"
-    # keras_callbacks = [
-    #     EarlyStopping(monitor='val_loss', patience=5, verbose=1, min_delta=0.001)
-    # ]
+def train(model_conv, ds_train, ds_val, batch_size=128, epochs=10):
+    checkpoint_path = "checkpoints/labeler_cnn_emnist/training_9/cp-{epoch:02d}.ckpt"
+    
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
-                                                    save_best_only=True,
                                                     verbose=1)
 
     #enlever cllbacks=[cp_callback] pour ne plus overwright les poids une fois le modele entrainé
@@ -151,11 +144,9 @@ def train(model_conv, ds_train, ds_val, batch_size=128, epochs=2):
 
 def visualisation(model, train, ds_test, ds_val, ds_train):
     # Visu
-
-
     x_test_list = []
     y_test_list = []
-
+    
     # Itérer sur le dataset et extraire les valeurs
     for x, y in ds_test:
         x_test_list.append(x.numpy())  # Convertir le tenseur TensorFlow en tableau NumPy
@@ -187,5 +178,8 @@ def visualisation(model, train, ds_test, ds_val, ds_train):
 if __name__ == "__main__" : 
     ds_train, ds_val, ds_test = get_dataset_keras()
     model = create_model()
-    train = train(model, ds_train, ds_val)
-    visualisation(model, train, ds_train, ds_val, ds_test)
+    train(model, ds_train, ds_val)
+    #visualisation(model, train, ds_train, ds_val, ds_test)
+
+
+

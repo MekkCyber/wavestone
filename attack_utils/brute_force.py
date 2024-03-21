@@ -13,7 +13,7 @@ import threading
 import requests
 import time
 import sys
-from label import label
+from label import label_emnist, label_mnist
 from dl_models import attacker_cnn
 from bs4 import BeautifulSoup
 from PIL import Image
@@ -101,7 +101,7 @@ def main():
     ###################### Captcha ##########################
     captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
     tfds_captcha_images = convert_to_tfds(captcha_images)
-    predictions = label(tfds_captcha_images)
+    predictions = label_mnist(tfds_captcha_images)
     attacker_dataset = convert_to_tfds(captcha_images, predictions)
     attacker_model = attacker_cnn.create_model()
     trained_model = attacker_cnn.train(attacker_model, attacker_dataset, epochs=5)

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os 
 
 def feature_extraction(I, num_chars=4):    
     I1 = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
@@ -117,15 +118,18 @@ def feature_extraction_diagrams(image) :
 
 # Load the image
 def test_feature_extractor() :
-    image = cv2.imread('generated_captchas/49Fz.jpeg')
-
+    captchas = os.listdir("generated_captchas")
+    i = 0
     # Call the function
-    characters = feature_extraction(image)
-    for index, character in enumerate(characters) : 
-        resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
-        cv2.imwrite(f'characters/character_{index}.jpg', resized_image)
+    for captcha in captchas[:5] : 
+        image = cv2.imread(f'generated_captchas/{captcha}')
+        characters = feature_extraction(image)
+        for index, character in enumerate(characters) : 
+            resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+            cv2.imwrite(f'characters/character_{i}.jpg', resized_image)
+            i += 1
 
-#test_feature_extractor()
+test_feature_extractor()
 # def test(histogram) : 
 #     intervals = []
 #     for i in range(1, w) : 
@@ -143,12 +147,12 @@ def test_feature_extractor() :
 # print(test(histogram))
         
 
-def read_character() :
-    for i in range(4) : 
+# def read_character() :
+#     for i in range(4) : 
 
-        character = cv2.imread(f'characters/character_{i}.jpg')
-        print(character.shape)
-read_character()
+#         character = cv2.imread(f'characters/character_{i}.jpg', cv2.IMREAD_GRAYSCALE)
+#         print(character.shape)
+# read_character()
 
 # def read_eminst() : 
 #     character = cv2.imread(f'tmp_emnist/a/6a9fd758-c75a-11ee-9e7d-e0d045d9590d.png')
