@@ -3,6 +3,7 @@ from captcha.image import ImageCaptcha
 import random
 import string
 import os
+from PIL import Image
 
 def generate_captcha(number_characters=4, width=500, height=150):
     # Set the captcha characters
@@ -29,7 +30,34 @@ def generate_captcha(number_characters=4, width=500, height=150):
     captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
 
-    print(f'Captcha image saved to: {captcha_image_file}')
+    THRESHOLD = 235
+    BLACK = (0, 0, 0)
+
+
+    img = Image.open(captcha_image_file)
+    img = img.convert("RGBA")
+    width, height = img.size
+    new_img = Image.new("RGB", (width, height), (0, 0, 0))
+
+    pixels = img.load()
+    
+    # Iterate through each pixel
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = pixels[x, y]
+            # Check if the pixel is close to white
+            if r > THRESHOLD and g > THRESHOLD and b > THRESHOLD:
+                # If close to white, set pixel color to dark_color
+                new_img.putpixel((x, y), BLACK)
+            else:
+                # Otherwise, keep the original pixel color
+                new_img.putpixel((x, y), (r, g, b, a))
+    
+    # Save the modified image
+    new_img.save(captcha_image_file)
+    
+
+    print(f'{captcha_image_file}')
 
 if __name__ == "__main__":
     # Extract the captcha text from command line arguments

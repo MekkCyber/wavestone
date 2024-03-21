@@ -340,7 +340,12 @@ function generateCaptcha(captchaLength) {
 
     pythonProcess.stdout.on('data', (data) => {
         const imagePath = data.toString().trim();
+        if (imagePath === "Captcha text not provided.") {
+            console.log('An error occured, exiting.');
+        }
+        else {
         console.log(`Captcha image generated at: ${imagePath}`);
+        }
     });
 
     pythonProcess.stderr.on('data', (data) => {
