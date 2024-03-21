@@ -25,3 +25,9 @@ def label_to_chr_emnist(arr) :
         else : 
             result.append(chr(elt - 36 + ord('a')))
     return result
+
+
+def normalize_and_expand_img(image, label):
+        if len(image.shape) == 2:
+            image = tf.expand_dims(image, axis=-1)
+        return tf.cast(image, tf.float32) / 255., label

@@ -1,5 +1,6 @@
 from dl_models import labeler_cnn_mnist
 from dl_models import labeler_cnn_emnist
+import tensorflow as tf 
 
 def get_labeler_from_ckpt_mnist(checkpoint_path=None) : 
     model = labeler_cnn_mnist.create_model()
@@ -16,12 +17,14 @@ def get_labeler_from_ckpt_mnist(checkpoint_path=None) :
 def get_labeler_from_ckpt_emnist(checkpoint_path=None) : 
     model = labeler_cnn_emnist.create_model()
     if checkpoint_path is None : 
-        checkpoint_path = "checkpoints/labeler_cnn_emnist/training_8/cp-07.ckpt"
-
-    model.load_weights(checkpoint_path).expect_partial()
+        checkpoint_path = "checkpoints/labeler_cnn_emnist/training_13/best.weights.h5"
+    
+    model.load_weights(checkpoint_path)
+    #model = tf.keras.models.load_model(checkpoint_path)
     _, _, ds_test = labeler_cnn_emnist.get_dataset_keras()
-    loss, acc = model.evaluate(ds_test, verbose=2)
-    print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
+    #ds_test = labeler_cnn_emnist.get_test_dataset_kaggle()
+    #loss, acc = model.evaluate(ds_test, verbose=2)
+    #print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
 
     return model
 
