@@ -327,5 +327,5 @@ exports.loginHandle = (req, res, next) => {
 exports.logoutHandle = (req, res) => {
     //req.logout();
     req.flash('success_msg', 'You are logged out');
-    res.redirect('/auth/login');
+    res.redirect('/auth/login?captchaType=MNIST');
 }
