@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const { spawn } = require('child_process');
+
 
 const fs = require('fs');
 const path = require('path');
@@ -8,10 +10,6 @@ const path = require('path');
 
 //------------ Importing Controllers ------------//
 const authController = require('../controllers/authController')
-
-//-------------- Images --------------//
-
-//router.get('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
 
 //------------ Login Route ------------//
 router.get('/login', (req, res) => {
@@ -54,6 +52,45 @@ function generateRandomString(length) {
   }
   return randomString;
 }
+
+
+//------------ Python Captcha ------------//
+
+function generateCaptcha(captchaLength) {
+  return new Promise((resolve, reject) => {
+      const pythonProcess = spawn('python', ['attack_utils/captcha_generate.py', captchaLength]);
+
+      pythonProcess.stdout.on('data', (data) => {
+          const imagePath = data.toString().trim();
+          if (imagePath === "Captcha text not provided.") {
+              console.log('An error occurred, exiting.');
+              reject('An error occurred while generating captcha.');
+          } else {
+              console.log(`Captcha image generated at: ${imagePath}`);
+              resolve(imagePath);
+          }
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+          console.error(`Error occurred: ${data}`);
+          reject('An error occurred while generating captcha.');
+      });
+
+      pythonProcess.on('close', (code) => {
+          console.log(`Child process exited with code ${code}`);
+      });
+  });    
+}
+
+router.get('/generateCaptcha', async (req, res) => {
+  try {
+      const imagePath = await generateCaptcha(8);
+      res.redirect(`/login?captchaType=Python`);
+  } catch (error) {
+      res.status(500).send('Error occurred while generating captcha.');
+  }
+});
+
 
 
 

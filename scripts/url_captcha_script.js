@@ -17,7 +17,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener to reload the page when captcha selector changes
     captchaSelector.addEventListener('change', function() {
         const selectedCaptchaType = this.value;
-        window.location.href = '/auth/login?captchaType=' + selectedCaptchaType;
+        if (selectedCaptchaType === 'Python') {
+            fetch('/auth/generateCaptcha')
+            // .then(response => response.text())
+            // .then(message => console.log(message))
+            // .catch(error => console.error(error))
+            // .then(() => {
+            //     // Redirect after code completion
+            //     window.location.href = '/auth/login?captchaType=Python';
+            // })
+        } else {
+            // Redirect without executing Python code
+            console.log("Changing captcha type to :", selectedCaptchaType)
+            window.location.href = '/auth/login?captchaType=' + selectedCaptchaType;
+        }
     });
 
     // Get all other selectors

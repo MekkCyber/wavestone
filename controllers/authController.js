@@ -329,30 +329,3 @@ exports.logoutHandle = (req, res) => {
     req.flash('success_msg', 'You are logged out');
     res.redirect('/auth/login?captchaType=MNIST');
 }
-
-
-
-//------------ Generate Captcha ------------//
-const { spawn } = require('child_process');
-
-function generateCaptcha(captchaLength) {
-    const pythonProcess = spawn('python', ['../attack_utils/generate_captcha.py', captchaLength]);
-
-    pythonProcess.stdout.on('data', (data) => {
-        const imagePath = data.toString().trim();
-        if (imagePath === "Captcha text not provided.") {
-            console.log('An error occured, exiting.');
-        }
-        else {
-        console.log(`Captcha image generated at: ${imagePath}`);
-        }
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-        console.error(`Error occurred: ${data}`);
-    });
-
-    pythonProcess.on('close', (code) => {
-        console.log(`Child process exited with code ${code}`);
-    });
-}

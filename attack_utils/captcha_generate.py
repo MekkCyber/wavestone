@@ -5,15 +5,14 @@ import string
 import os
 from PIL import Image
 
-def generate_captcha(number_characters=4, width=500, height=150):
+def generate_captcha(captcha_length, width=500, height=150):
     # Set the captcha characters
     characters = string.ascii_letters + string.digits
 
     # Generate a random captcha text
-    captcha_text = ''.join(random.choice(characters) for _ in range(number_characters))  # You can adjust the length as needed
-
+    captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
     # Create an ImageCaptcha object
-    captcha = ImageCaptcha(fonts=['fonts/Roboto-Light.ttf'], 
+    captcha = ImageCaptcha(fonts=[os.getcwd() + '/attack_utils/fonts/Roboto-Light.ttf'], 
                            font_sizes=(100,100),
                            width=width, 
                            height=height, 
@@ -23,14 +22,14 @@ def generate_captcha(number_characters=4, width=500, height=150):
     #captcha_image = captcha.generate(captcha_text)
 
     # Save the captcha image to a file
-    folder_path = 'generated_captchas'
+    folder_path = os.getcwd() + '/attack_utils/generated_captchas'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
     captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
 
-    THRESHOLD = 235
+    THRESHOLD = 220
     BLACK = (0, 0, 0)
 
 
@@ -66,7 +65,7 @@ if __name__ == "__main__":
     except:
         captcha_length = None
 
-    if captcha_length:
+    if captcha_length != None:
         generate_captcha(captcha_length)
     else:
         print("Captcha text not provided.")

@@ -5,6 +5,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const app = express();
 
@@ -51,8 +52,11 @@ app.use(function(req, res, next) {
   next();
 });
 
+//------------ Images share ------------//
 app.use('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
 app.use(express.static(path.join(__dirname, 'attack_utils', 'generated_captchas')));
+
+//------------ Scripts share ------------//
 app.use(express.static(path.join(__dirname, 'scripts')));
 
 //------------ Routes ------------//
