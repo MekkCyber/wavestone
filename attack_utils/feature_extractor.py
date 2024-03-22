@@ -22,6 +22,10 @@ def feature_extraction(I, num_chars=4):
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
     # Extract the 3 Regions (Digits)
+    I3 = cv2.transpose(I3)
+    # cv2.imshow('Transposed Image', I3)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     characters_raw = []
     indexes_raw = []
     characters_processed = []
@@ -39,54 +43,60 @@ def feature_extraction(I, num_chars=4):
         characters_raw.append(character)
     if len(characters_raw) == 1:
         h, w = stats[1][cv2.CC_STAT_HEIGHT], stats[1][cv2.CC_STAT_WIDTH]
-        split_width = round(w / num_chars)
+        split_height = round(h / num_chars)
         for i in range(4):
-            start_col = i * split_width
-            end_col = (i + 1) * split_width
-            split_region = characters_raw[0][:, start_col:end_col]
+            start_line = i * split_height
+            end_line = (i + 1) * split_height
+            split_region = characters_raw[0][start_line:end_line, :]
             characters_processed.append(split_region)
         
     elif len(characters_raw) == 2:
         h1, w1 = stats[indexes_raw[0]][cv2.CC_STAT_HEIGHT], stats[indexes_raw[0]][cv2.CC_STAT_WIDTH]
         h2, w2 = stats[indexes_raw[1]][cv2.CC_STAT_HEIGHT], stats[indexes_raw[1]][cv2.CC_STAT_WIDTH]
 
-        if abs(w2-w1)<20:  # each image contains two characters
-            characters_processed.append(characters_raw[0][:, round(w1/2):])
-            characters_processed.append(characters_raw[0][:, :round(w1/2)])
-            characters_processed.append(characters_raw[1][:, round(w2/2):])
-            characters_processed.append(characters_raw[1][:, :round(w2/2)])
-        elif w2 > w1 :  # w2 contains 3 
+        if abs(h2-h1)<20:  # each image contains two characters
+            characters_processed.append(characters_raw[0][round(h1/2), : ])
+            characters_processed.append(characters_raw[0][:round(h1/2), : ])
+            characters_processed.append(characters_raw[1][round(h2/2), : ])
+            characters_processed.append(characters_raw[1][:round(h2/2), : ])
+        elif h2 > h1 :  # h2 contains 3 
             characters_processed.append(characters_raw[0])
-            split_width = round(w2 / 3)
+            split_height = round(h2 / 3)
             for i in range(3):
-                start_col = i * split_width
-                end_col = (i + 1) * split_width
-                split_region = characters_raw[1][:, start_col:end_col]
+                start_line = i * split_height
+                end_line = (i + 1) * split_height
+                split_region = characters_raw[1][start_line:end_line, : ]
                 characters_processed.append(split_region)
-        elif w1 > w2 :  # w2 contains 3 
-            characters_processed.append(characters_raw[0])
-            split_width = round(w1 / 3)
+        elif h1 > h2 :  # h2 contains 3 
+            split_height = round(h1 / 3)
             for i in range(3):
-                start_col = i * split_width
-                end_col = (i + 1) * split_width
-                split_region = characters_raw[0][:, start_col:end_col]
+                start_line = i * split_height
+                end_line = (i + 1) * split_height
+                split_region = characters_raw[0][start_line:end_line, : ]
                 characters_processed.append(split_region)
+            characters_processed.append(characters_raw[1])
         
     elif len(characters_raw) == 3 : 
-        max_index = np.argmax([stats[indexes_raw[j]][cv2.CC_STAT_WIDTH] for j in range(len(characters_raw))])
+        max_index = np.argmax([stats[indexes_raw[j]][cv2.CC_STAT_HEIGHT] for j in range(len(characters_raw))])
         hi, wi = stats[indexes_raw[max_index]][cv2.CC_STAT_HEIGHT], stats[indexes_raw[max_index]][cv2.CC_STAT_WIDTH]
-        split_width = round(wi / 2)
+        split_height = round(hi / 2)
+        for j in range(2) : 
+            if j < max_index : 
+                characters_processed.append(characters_raw[j])
         for i in range(2):
-            start_col = i * split_width
-            end_col = (i + 1) * split_width
-            split_region = characters_raw[max_index][:, start_col:end_col]
+            start_line = i * split_height
+            end_line = (i + 1) * split_height
+            split_region = characters_raw[max_index][start_line:end_line, : ]
             characters_processed.append(split_region)
-        characters_processed.extend([characters_raw[i] for i in range(len(characters_raw)) if i != max_index])
+        for i in range(1,4) :
+            if i > max_index+1 : 
+                characters_processed.append(characters_raw[i-1])
     
     elif len(characters_raw) == 4:
         for i in range(4):
             characters_processed.append(characters_raw[i])
-    
+    for i,char in enumerate(characters_processed) : 
+        characters_processed[i] = np.transpose(characters_processed[i])
     return characters_processed
 
 def shape_feats(S):
@@ -121,15 +131,17 @@ def test_feature_extractor() :
     captchas = os.listdir("generated_captchas")
     i = 0
     # Call the function
-    for captcha in captchas[:5] : 
+    print(captchas)
+    for captcha in captchas : 
         image = cv2.imread(f'generated_captchas/{captcha}')
         characters = feature_extraction(image)
         for index, character in enumerate(characters) : 
             resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+            #resized_image = (resized_image/255. >= 0.5).astype(np.uint8)*255
             cv2.imwrite(f'characters/character_{i}.jpg', resized_image)
             i += 1
 
-test_feature_extractor()
+#test_feature_extractor()
 # def test(histogram) : 
 #     intervals = []
 #     for i in range(1, w) : 
@@ -147,12 +159,16 @@ test_feature_extractor()
 # print(test(histogram))
         
 
-# def read_character() :
-#     for i in range(4) : 
+def read_character() :
+    for i in range(1) : 
 
-#         character = cv2.imread(f'characters/character_{i}.jpg', cv2.IMREAD_GRAYSCALE)
-#         print(character.shape)
-# read_character()
+        character = cv2.imread(f'characters/character_{i}.jpg', cv2.IMREAD_GRAYSCALE)
+        #new_character = (character/255. >= 0.5).astype(np.uint8)*255
+        # cv2.imshow('Transposed Image', new_character)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        print(character)
+#read_character()
 
 # def read_eminst() : 
 #     character = cv2.imread(f'tmp_emnist/a/6a9fd758-c75a-11ee-9e7d-e0d045d9590d.png')
