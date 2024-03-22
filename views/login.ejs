@@ -42,8 +42,7 @@
 
 
 <script type="text/javascript" src="/url_captcha_script.js"></script>
-
-
+<script type="text/javascript" src="/redirect_captcha_generation.js"></script>
 
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
@@ -86,7 +85,7 @@
                             <%} else if (captchaType === 'Python') {%>
                                 <% const imagePath = session.python_captcha; %>
                                 <% console.log(imagePath); %>
-                                <img src="/attack_utils/generated_captchas/<%= imagePath %>" alt="Captcha Image">
+                                <img id="pythonCaptcha" src="/attack_utils/generated_captchas/<%= imagePath %>" alt="Captcha Image">
                             <%} else {%>
                                 <%for (let i = 0; i < 4; i++) {%>
                                     <% const random = captcha_value[i]; %>
@@ -96,10 +95,7 @@
                                     <img src="/attack_utils/images_dirs/<%= randomFolder %>/<%= randomImageName %>" alt="Random Image <%= i + 1 %>">
                                 <%}%>
                             <%}%>
-                          </div>   
-                          <div>
-                            
-                          </div>  
+                          </div>    
                     </div>
                     <div class="form-group captcha">
                         <label for="form-group captcha">Enter the above characters :</label>

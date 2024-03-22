@@ -86,7 +86,7 @@ function generateCaptcha(captchaLength) {
 
 router.get('/generateCaptcha', async (req, res) => {
   try {
-      const imagePath = await generateCaptcha(8);
+      const imagePath = await generateCaptcha(4);
       const clientPath = path.basename(imagePath);
       req.session.python_captcha = clientPath;
       res.redirect(`/auth/login?captchaType=Python`);

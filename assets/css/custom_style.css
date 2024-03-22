@@ -19,15 +19,28 @@ img {
     margin-left: -5%;
     margin-right: -5%;
 }
+
+#randomImages img#pythonCaptcha {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    outline: none;
+    font: inherit;
+    text-align: inherit;
+    color: inherit;
+
+    /* Ensure it fills the entire space */
+    width: 100%;
+    height: 100%;
+}
+
 .captcha {
     display: flex;
     gap: 50px;
     justify-content: center;
     align-items: center;
 }
-
-
-
 
 .custom-container {
     width: 80%;
@@ -107,3 +120,4 @@ img {
 #launch_button:hover {
     background-color: #FF5733; /* Red on hover */
 }
+
