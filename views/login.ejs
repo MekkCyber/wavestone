@@ -43,6 +43,7 @@
 
 <script type="text/javascript" src="/url_captcha_script.js"></script>
 <script type="text/javascript" src="/redirect_captcha_generation.js"></script>
+<script type="text/javascript" src="/validate_captcha_input.js"></script>
 
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
@@ -98,53 +99,16 @@
                     </div>
                     <div class="form-group captcha">
                         <label for="form-group captcha">Enter the above characters :</label>
-                        <%if (captchaType === 'MNIST') {%>
-                            <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput_MNIST(this)" pattern="\d{4}" title="Please enter a 4-digit number">                         
-                        <%} else if (captchaType === 'EMNIST') {%>
-                            <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput_EMNIST(this)" pattern="[0-9a-zA-Z]{4}" title="Please enter a 4-character captcha value">
+                        <%if (captchaType === 'EMNIST') {%>
+                            <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput_generic(this)" pattern="[0-9a-zA-Z]{4}" title="Please enter a 4-character captcha value">
                         <%} else if (captchaType === 'Python') {%>
-                            <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput_Python(this)" pattern="[0-9a-zA-Z]{4}" title="Please enter a 4-digit number">                         
+                            <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput_generic(this)" pattern="[0-9a-zA-Z]{4}" title="Please enter a 4-digit number">                         
                         <%} else {%>
                             <input type="text" name="captcha_input" id="captcha_input" maxlength="4" oninput="validateInput_MNIST(this)" pattern="\d{4}" title="Please enter a 4-digit number">     
                         <%}%>
                     </div>
                     <input type="hidden" name="captcha_value" value="<%= captcha_value %>">
                     <input type="hidden" name="lab_state" value="<%= captchaType%>">
-
-                    <script>
-                        function validateInput_MNIST(input) {
-                            input.value = input.value.replace(/\D/g, '');
-                            if (input.value.trim() === '') {
-                                input.setCustomValidity('Please enter a 4-digit number');
-                                enableSubmitButton(false);
-                            } else if (/^\d{4}$/.test(input.value)) {
-                            input.setCustomValidity('');
-                            enableSubmitButton(true);
-                            } else {
-                            input.setCustomValidity('Please enter a 4-digit number');
-                            enableSubmitButton(false);
-                            } 
-                        }
-                        function validateInput_EMNIST(input) {
-                            // Remove any non-alphanumeric characters from the input value
-                            input.value = input.value.replace(/[^0-9a-zA-Z]/g, '');
-                            
-                            if (input.value.trim() === '') {
-                                input.setCustomValidity('Please enter a 4-character string containing digits and/or letters (upper or lower case)');
-                                enableSubmitButton(false);
-                            } else if (/^[0-9a-zA-Z]{4}$/.test(input.value)) {
-                                input.setCustomValidity('');
-                                enableSubmitButton(true);
-                            } else {
-                                input.setCustomValidity('Please enter a 4-character string containing digits and/or letters (upper or lower case)');
-                                enableSubmitButton(false);
-                            } 
-                        }
-                        function enableSubmitButton(enable) {
-                            var submitButton = document.querySelector('button[type="submit"]');
-                            submitButton.disabled = !enable;
-                        }
-                    </script>
                     <button type="submit" class="btn btn-primary btn-block" disabled>Login</button>
 
                 </form>

@@ -37,12 +37,12 @@ router.get('/login', (req, res) => {
     else if (captchaType === 'EMNIST'){
       captcha_value = generateRandomString(4);
     }
-    else if (captchaType === 'Python') {
-      captcha_value = Math.floor(1000 + Math.random() * 9000);
-    }
+    
     
     captcha_value = captcha_value.toString();
-    fs.writeFileSync('captcha.txt', captcha_value)
+    if (captchaType !== 'Python') {
+      fs.writeFileSync('captcha.txt', captcha_value)
+    }
     res.render('login', { imagePaths, captcha_value, captchaType});
 });
 

@@ -54,6 +54,10 @@ def generate_captcha(captcha_length, width=500, height=150):
     
     # Save the modified image
     new_img.save(captcha_image_file)
+
+    
+    with open('captcha.txt', 'w') as file_descriptor:
+        file_descriptor.write(captcha_text)
     
 
     print(f'{captcha_image_file}')
@@ -62,10 +66,6 @@ if __name__ == "__main__":
     # Extract the captcha text from command line arguments
     try :
         captcha_length = int(sys.argv[1])
-    except:
-        captcha_length = None
-
-    if captcha_length != None:
         generate_captcha(captcha_length)
-    else:
+    except:
         print("Captcha text not provided.")

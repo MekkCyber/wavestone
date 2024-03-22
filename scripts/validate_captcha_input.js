@@ -11,7 +11,7 @@ function validateInput_MNIST(input) {
     enableSubmitButton(false);
     } 
 }
-function validateInput_EMNIST(input) {
+function validateInput_generic(input) {
     // Remove any non-alphanumeric characters from the input value
     input.value = input.value.replace(/[^0-9a-zA-Z]/g, '');
     
