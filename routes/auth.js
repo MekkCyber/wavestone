@@ -68,7 +68,7 @@ function generateCaptcha(captchaLength) {
               console.log('An error occurred, exiting.');
               reject('An error occurred while generating captcha.');
           } else {
-              console.log(`Captcha image generated at: ${imagePath}`);
+              //console.log(`Captcha image generated at: ${imagePath}`);
               resolve(imagePath);
           }
       });
@@ -78,9 +78,9 @@ function generateCaptcha(captchaLength) {
           reject('An error occurred while generating captcha.');
       });
 
-      pythonProcess.on('close', (code) => {
-          console.log(`Child process exited with code ${code}`);
-      });
+      // pythonProcess.on('close', (code) => {
+      //     console.log(`Child process exited with code ${code}`);
+      // });
   });    
 }
 

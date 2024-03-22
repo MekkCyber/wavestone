@@ -84,7 +84,6 @@
                                 <%}%>
                             <%} else if (captchaType === 'Python') {%>
                                 <% const imagePath = session.python_captcha; %>
-                                <% console.log(imagePath); %>
                                 <img id="pythonCaptcha" src="/attack_utils/generated_captchas/<%= imagePath %>" alt="Captcha Image">
                             <%} else {%>
                                 <%for (let i = 0; i < 4; i++) {%>

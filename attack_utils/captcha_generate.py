@@ -12,7 +12,7 @@ def generate_captcha(captcha_length, width=500, height=150):
     # Generate a random captcha text
     captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
     # Create an ImageCaptcha object
-    captcha = ImageCaptcha(fonts=[os.getcwd() + '/fonts/Roboto-Light.ttf'], 
+    captcha = ImageCaptcha(fonts=[os.getcwd() + '/attack_utils/fonts/Roboto-Light.ttf'], 
                            font_sizes=(100,100),
                            width=width, 
                            height=height, 
@@ -22,7 +22,7 @@ def generate_captcha(captcha_length, width=500, height=150):
     #captcha_image = captcha.generate(captcha_text)
 
     # Save the captcha image to a file
-    folder_path = os.getcwd() + '/generated_captchas'
+    folder_path = os.getcwd() + '/attack_utils/generated_captchas'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
