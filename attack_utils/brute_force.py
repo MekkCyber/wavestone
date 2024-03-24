@@ -14,7 +14,7 @@ import requests
 import time
 import sys
 from label import label_emnist, label_mnist
-from dl_models import attacker_cnn
+from dl_models import attacker_cnn_mnist
 from bs4 import BeautifulSoup
 from PIL import Image
 import numpy as np 
@@ -103,8 +103,8 @@ def main():
     tfds_captcha_images = convert_to_tfds(captcha_images)
     predictions = label_mnist(tfds_captcha_images)
     attacker_dataset = convert_to_tfds(captcha_images, predictions)
-    attacker_model = attacker_cnn.create_model()
-    trained_model = attacker_cnn.train(attacker_model, attacker_dataset, epochs=5)
+    attacker_model = attacker_cnn_mnist.create_model()
+    trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
     #########################################################
 
     cracker = BruteForceCracker(url, username, error, trained_model)
