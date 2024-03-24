@@ -26,6 +26,16 @@ def label_to_chr_emnist(arr) :
             result.append(chr(elt - 36 + ord('a')))
     return result
 
+def chr_to_label_emnist(chars):
+    result = []
+    for char in chars:
+        if char.isdigit():
+            result.append(int(char))
+        elif char.isupper():
+            result.append(ord(char) - ord('A') + 10)
+        elif char.islower():
+            result.append(ord(char) - ord('a') + 36)
+    return result
 
 def normalize_and_expand_img(image, label):
         if len(image.shape) == 2:

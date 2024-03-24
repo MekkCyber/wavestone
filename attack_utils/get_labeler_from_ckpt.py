@@ -17,7 +17,7 @@ def get_labeler_from_ckpt_mnist(checkpoint_path=None) :
 def get_labeler_from_ckpt_emnist(checkpoint_path=None) : 
     model = labeler_cnn_emnist.create_model()
     if checkpoint_path is None : 
-        checkpoint_path = "checkpoints/labeler_cnn_emnist/training_13/best.weights.h5"
+        checkpoint_path = "checkpoints/labeler_cnn_emnist_finetuned/training_5/best.weights.h5"
     
     model.load_weights(checkpoint_path)
     #model = tf.keras.models.load_model(checkpoint_path)

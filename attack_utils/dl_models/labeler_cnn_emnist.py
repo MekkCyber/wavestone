@@ -6,6 +6,7 @@ from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
 from keras.layers import *
+from keras.callbacks import *
 
 from emnist import extract_training_samples
 from emnist import extract_test_samples
@@ -131,7 +132,25 @@ def create_model():
     #     Dense(512, activation='relu'),
     #     Dense(62, activation='softmax')
     # ])
-    
+    # data_augmentation = tf.keras.Sequential([
+    #     tf.keras.layers.Input(shape=(28, 28, 1)),
+    #     tf.keras.layers.Resizing(32,32),
+    #     tf.keras.layers.RandomRotation(0.3),
+    # ])
+    # base_model = tf.keras.applications.VGG16(weights='imagenet', include_top=False, pooling='avg')
+    # for layer in base_model.layers:
+    #     layer.trainable = False
+    # model_conv = tf.keras.Sequential([
+    #     data_augmentation,
+    #     tf.keras.layers.Conv2D(3,3,padding="same"),
+    #     base_model,
+    # #     tf.keras.layers.Conv2D(32,3),
+    # #     tf.keras.layers.MaxPooling2D(2,2),
+    # #     tf.keras.layers.Flatten(),
+    #     tf.keras.layers.Dense(512,activation='relu'),
+    #     tf.keras.layers.Dense(128,activation='relu'),
+    #     tf.keras.layers.Dense(62,activation='softmax')
+    # ])
     model_conv.build((None, 28, 28, 1))
     model_conv.compile(
         optimizer = tf.keras.optimizers.Adam(),
@@ -151,14 +170,14 @@ def create_model():
 def train(model_conv, ds_train, ds_val, batch_size=128, epochs=80):
     checkpoint_path = "checkpoints/labeler_cnn_emnist/training_13/best.weights.h5"
     
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+    cp_callback = ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
                                                     verbose=1,
                                                     save_best_only=True,
                                                     monitor='val_sparse_categorical_accuracy',
                                                     mode='max')
-    ES = tf.keras.callbacks.EarlyStopping(monitor='val_sparse_categorical_accuracy',min_delta=0,verbose=0,restore_best_weights = True,patience=5,mode='max')
-    RLP = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss',patience=5,factor=0.2,min_lr=0.0001)
+    ES = EarlyStopping(monitor='val_sparse_categorical_accuracy',min_delta=0,verbose=0,restore_best_weights = True,patience=5,mode='max')
+    RLP = ReduceLROnPlateau(monitor='val_loss',patience=5,factor=0.2,min_lr=0.0001)
 
     model_conv.fit(
         ds_train,
