@@ -41,6 +41,6 @@ def label_emnist(data_captcha, num=20) :
     return result, tf.argmax(tf.nn.softmax(labeled_data, axis=-1), axis=-1)
 
 
-result = label_emnist(2, num=120)
-print(result[0])
-print(result[1])
+# result = label_emnist(2, num=120)
+# print(result[0])
+# print(result[1])

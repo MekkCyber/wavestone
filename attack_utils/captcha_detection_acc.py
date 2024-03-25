@@ -14,6 +14,7 @@ import time
 
 def generate_captcha(captcha_length, width=500, height=150):
     characters = string.ascii_letters + string.digits
+    characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
 
     captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
 
@@ -24,10 +25,6 @@ def generate_captcha(captcha_length, width=500, height=150):
                           )
 
     folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-        
-
 
     captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
@@ -99,13 +96,18 @@ def test(n) :
     iterator = 0
     accuracy = 0
     matches = []
+    folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
+    
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)
+    os.makedirs(folder_path)
+    
     for i in range(n) : 
         generate_captcha(4)
     captchas = os.listdir('generated_captcha_for_acc')
-    for i in range(n-1) : 
+    for i in range(n-10) : 
         print(i)
         cracked = feature_extractor_and_labeler(model, captchas[i])
-        time.sleep(0.3)
         # time.sleep(0.5)
         # cracked = label(model)
         # time.sleep(0.1)
@@ -119,7 +121,11 @@ def test(n) :
     print(accuracy)
     print(f"the captcha accuracy is {accuracy/iterator}")
     print(matches)
+    gap = 0
+    for i in range(len(matches)-1) : 
+        if matches[i+1]-matches[i] > 5 : 
+            gap += 1
+    print(gap)
 
-
-test(500)
+test(1000)
     

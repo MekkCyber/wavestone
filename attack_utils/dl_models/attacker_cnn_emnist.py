@@ -37,7 +37,7 @@ def create_model() :
 
 
 def train(model_conv, ds_train, ds_val=None, epochs=20) : 
-    checkpoint_path = "checkpoints/attacker/training_1/cp-{epoch:02d}.ckpt"
+    checkpoint_path = "checkpoints/attacker_mnist/training_1/best.weights.h5"
 
     # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
     #                                                 save_weights_only=True,

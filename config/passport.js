@@ -10,10 +10,10 @@ module.exports = function (passport) {
             //------------ User Matching ------------//
             const storedCaptcha = fs.readFileSync('captcha.txt', 'utf8'); // Read file content as string
             const enteredCaptcha = req.body.captcha_input; // Get the stored captcha value from the session
-            console.log("storedCaptcha: ",storedCaptcha)
-            console.log("enteredCaptcha: ",enteredCaptcha)
+            console.log("storedCaptcha: ", storedCaptcha)
+            console.log("enteredCaptcha: ", enteredCaptcha)
             // Check if the entered captcha matches the stored captcha
-            if (enteredCaptcha !== storedCaptcha || !enteredCaptcha) {
+            if (enteredCaptcha.toLowerCase() !== storedCaptcha.toLowerCase() || !enteredCaptcha) {
                 return done(null, false, { message: 'Captcha incorrect! Please try again.' });
             }
             User.findOne({
