@@ -13,13 +13,12 @@ const authController = require('../controllers/authController')
 
 //------------ Login Route ------------//
 router.get('/login', (req, res) => {
-    const imageFolders = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 
+    const imageFolders = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 
     'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'generated_captchas'];
     const imagePaths = imageFolders.map(folder => {
       const folderPath = folder === 'generated_captchas' ? 
                           path.join(__dirname, '..', 'attack_utils', folder) :
-                          path.join(__dirname, '..', 'attack_utils', 'images_dirs', folder);
+                          path.join(__dirname, '..', 'attack_utils', 'tmp_emnist', folder);
       const files = fs.readdirSync(folderPath);
       return {
           folder,
@@ -47,7 +46,7 @@ router.get('/login', (req, res) => {
 });
 
 function generateRandomString(length) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let randomString = '';
   for (let i = 0; i < length; i++) {
       randomString += chars.charAt(Math.floor(Math.random() * chars.length));

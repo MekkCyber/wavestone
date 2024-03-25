@@ -1,4 +1,3 @@
 from dl_models import attacker_cnn_mnist
-from dl_models import attacker_cnn_emnist
-from dl_models import labeler_cnn_emnist
+from dl_models import attacker_emnist
 from dl_models import labeler_cnn_mnist
