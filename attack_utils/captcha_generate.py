@@ -29,31 +29,31 @@ def generate_captcha(captcha_length, width=500, height=150):
     captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
 
-    THRESHOLD = 220
-    BLACK = (0, 0, 0)
+    # THRESHOLD = 220
+    # BLACK = (0, 0, 0)
 
 
-    img = Image.open(captcha_image_file)
-    img = img.convert("RGBA")
-    width, height = img.size
-    new_img = Image.new("RGB", (width, height), (0, 0, 0))
+    # img = Image.open(captcha_image_file)
+    # img = img.convert("RGBA")
+    # width, height = img.size
+    # new_img = Image.new("RGB", (width, height), (0, 0, 0))
 
-    pixels = img.load()
+    # pixels = img.load()
     
-    # Iterate through each pixel
-    for y in range(height):
-        for x in range(width):
-            r, g, b, a = pixels[x, y]
-            # Check if the pixel is close to white
-            if r > THRESHOLD and g > THRESHOLD and b > THRESHOLD:
-                # If close to white, set pixel color to dark_color
-                new_img.putpixel((x, y), BLACK)
-            else:
-                # Otherwise, keep the original pixel color
-                new_img.putpixel((x, y), (r, g, b, a))
+    # # Iterate through each pixel
+    # for y in range(height):
+    #     for x in range(width):
+    #         r, g, b, a = pixels[x, y]
+    #         # Check if the pixel is close to white
+    #         if r > THRESHOLD and g > THRESHOLD and b > THRESHOLD:
+    #             # If close to white, set pixel color to dark_color
+    #             new_img.putpixel((x, y), BLACK)
+    #         else:
+    #             # Otherwise, keep the original pixel color
+    #             new_img.putpixel((x, y), (r, g, b, a))
     
-    # Save the modified image
-    new_img.save(captcha_image_file)
+    # # Save the modified image
+    # new_img.save(captcha_image_file)
 
     
     with open('captcha.txt', 'w') as file_descriptor:

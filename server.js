@@ -53,7 +53,7 @@ app.use(function(req, res, next) {
 });
 
 //------------ Images share ------------//
-app.use('/attack_utils/images_dirs', express.static(path.join(__dirname, 'attack_utils', 'images_dirs')));
+app.use('/attack_utils/tmp_emnist', express.static(path.join(__dirname, 'attack_utils', 'tmp_emnist')));
 app.use('/attack_utils/generated_captchas', express.static(path.join(__dirname, 'attack_utils', 'generated_captchas')));
 
 //------------ Scripts share ------------//

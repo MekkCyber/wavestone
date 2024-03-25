@@ -1,3 +1,7 @@
 node_modules
-attack_utils/checkpoints
+attack_utils/checkpoints/attacker_emnist
+attack_utils/checkpoints/attacker_emnist_finetuned
+attack_utils/checkpoints/attacker_mnist 
+attack_utils/checkpoints/labeler_mnist/training_1
+attack_utils/checkpoints/labeler_mnist/training_2
 attack_utils/dl_models/checkpoints/

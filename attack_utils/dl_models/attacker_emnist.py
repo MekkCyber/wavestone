@@ -168,7 +168,7 @@ def create_model():
 
 #keras.utils.plot_model(cnn, "model.png", show_shapes=True)
 def train(model_conv, ds_train, ds_val, batch_size=128, epochs=80):
-    checkpoint_path = "checkpoints/labeler_cnn_emnist/training_13/best.weights.h5"
+    checkpoint_path = "checkpoints/attacker_emnist/training_13/best.weights.h5"
     
     cp_callback = ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
