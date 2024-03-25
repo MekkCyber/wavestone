@@ -62,6 +62,7 @@ app.use(express.static(path.join(__dirname, 'scripts')));
 //------------ Routes ------------//
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
+app.use('/attackPanel', require('./routes/attackPanel'));
 
 const PORT = process.env.PORT || 3006;
 

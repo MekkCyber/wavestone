@@ -20,7 +20,7 @@ def label_mnist(data_captcha) :
 def label_emnist(data_captcha, num=20) : 
     print("### Loading Labeler for EMNIST ###")
     real_characters = []
-    captchas = os.listdir('generated_captchas')
+    captchas = os.listdir('./attack_utils/generated_captchas')
     for captcha in captchas : 
         real_characters.extend(list(captcha[:4]))
     model = get_labeler_from_ckpt_emnist()

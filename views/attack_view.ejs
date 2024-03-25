@@ -1,0 +1,100 @@
+<style>
+    body {
+        font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
+        background-color: #222222; /* Set background color to black */
+        color: #00ff00; /* Set text color to green */
+        padding: 20px; /* Add some padding for aesthetics */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+
+    #outputContainer {
+        border: 2px solid #00ff00; /* Add a green border */
+        padding: 10px; /* Add padding inside the container */
+        background-color: #000; /* Set background color to black */
+        overflow-y: scroll; /* Enable vertical scrolling if content overflows */
+        max-height: 300px; /* Limit the height to provide a scrolling area */
+        white-space: pre; /* Preserve whitespace and line breaks exactly as they appear */
+        border-radius: 10px;
+        margin-bottom: 20px; /* Add margin at the bottom */
+    }
+    #executeBtn {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition: background-color 0.05s; /* Smooth transition for background-color */
+        cursor: pointer;
+        border-radius: 10px;
+    }
+    #executeBtn:hover {
+        background-color: #FF5733; /* Red on hover */
+    }
+    .spinner {
+        border: 4px solid #f3f3f3; /* Light grey border */
+        border-top: 4px solid #3498db; /* Blue border for spinner animation */
+        border-radius: 50%; /* Rounded border */
+        width: 20px; /* Set width of spinner */
+        height: 20px; /* Set height of spinner */
+        animation: spin 1s linear infinite; /* Spin animation */
+        position: absolute; /* Position spinner in the center */
+        top: 50%; /* Align spinner vertically */
+        left: 50%; /* Align spinner horizontally */
+        margin-top: -10px; /* Adjust top margin to center spinner */
+        margin-left: -10px; /* Adjust left margin to center spinner */
+        display: none; /* Hide spinner by default */
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div id="#attackView">
+    <button id="executeBtn">Execute Python Code</button>
+    <div class="spinner" id="spinner"></div>
+    <div id="outputContainer"></div>
+
+    <script>
+        const executeBtn = document.getElementById('executeBtn');
+        const outputContainer = document.getElementById('outputContainer');
+        const spinner = document.getElementById('spinner');
+
+        executeBtn.addEventListener('click', () => {
+            // Clear output container
+            outputContainer.innerText = 'Executing Python code...\n';
+            spinner.style.display = 'block';
+
+            // Send request to execute Python code
+            fetch('/attackPanel/launchAttack')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to execute Python code.');
+                    }
+                    // Read response as text and display dynamically
+                    return response.text();
+                })
+                .then(outputData => {
+                    // Append output data to output container
+                    outputContainer.innerText += outputData;
+                    // Automatically scroll to the bottom of the container
+                    outputContainer.scrollTop = outputContainer.scrollHeight;
+                    // Hide spinner
+                    spinner.style.display = 'none';
+                })
+                .catch(error => {
+                    outputContainer.innerText += `Error: ${error.message}\n`;
+                    // Hide spinner
+                    spinner.style.display = 'none';
+                });
+        });
+    </script>
+</div>
