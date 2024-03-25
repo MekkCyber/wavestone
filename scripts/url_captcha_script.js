@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     captchaSelector.addEventListener('change', function() {
         const selectedCaptchaType = this.value;
         if (selectedCaptchaType === 'Python') {
-            window.location.href = '/auth/generateCaptcha';
+            //window.location.href = '/auth/generateCaptcha';
+            window.location.href = '/auth/login?captchaType=Python';
             // .then(response => response.text())
             // .then(message => console.log(message))
             // .catch(error => console.error(error))

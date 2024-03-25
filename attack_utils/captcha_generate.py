@@ -4,6 +4,7 @@ import random
 import string
 import os
 from PIL import Image
+import uuid
 
 def generate_captcha(captcha_length, width=500, height=150):
     # Set the captcha characters
@@ -20,13 +21,11 @@ def generate_captcha(captcha_length, width=500, height=150):
 
     # Generate the captcha image
     #captcha_image = captcha.generate(captcha_text)
-
     # Save the captcha image to a file
     folder_path = os.getcwd() + '/attack_utils/generated_captchas'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
-
-    captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
+    captcha_image_file = os.path.join(folder_path, f'{str(uuid.uuid4())}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
 
     # THRESHOLD = 220
@@ -68,4 +67,4 @@ if __name__ == "__main__":
         captcha_length = int(sys.argv[1])
         generate_captcha(captcha_length)
     except:
-        print("Captcha text not provided.")
+        print("Captcha text length not provided.")

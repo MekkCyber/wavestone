@@ -12,7 +12,7 @@ const path = require('path');
 const authController = require('../controllers/authController')
 
 //------------ Login Route ------------//
-router.get('/login', (req, res) => {
+router.get('/login', async (req, res) => {
     const imageFolders = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 
     'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'generated_captchas'];
     const imagePaths = imageFolders.map(folder => {
@@ -41,6 +41,15 @@ router.get('/login', (req, res) => {
     captcha_value = captcha_value.toString();
     if (captchaType !== 'Python') {
       fs.writeFileSync('captcha.txt', captcha_value)
+    } else {
+      try {
+        const imagePath = await generateCaptcha(4);
+        const clientPath = path.basename(imagePath);
+        req.session.python_captcha = clientPath;
+        //res.redirect(`/auth/login?captchaType=Python`);
+      } catch (error) {
+          res.status(500).send('Error occurred while generating captcha.');
+      }
     }
     res.render('login', { imagePaths, captcha_value, captchaType});
 });

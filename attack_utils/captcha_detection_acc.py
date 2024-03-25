@@ -4,7 +4,7 @@ import os
 import random
 import cv2
 from feature_extractor import feature_extraction
-from get_labeler_from_ckpt import get_labeler_from_ckpt_emnist
+from get_attacker_from_ckpt import get_attacker_from_ckpt_python
 import numpy as np
 from utils import convert_to_tfds, label_to_chr_emnist
 import tensorflow as tf
@@ -92,7 +92,7 @@ def label(model) :
 
 
 def test(n) : 
-    model = get_labeler_from_ckpt_emnist()
+    model = get_attacker_from_ckpt_python()
     iterator = 0
     accuracy = 0
     matches = []
@@ -105,7 +105,7 @@ def test(n) :
     for i in range(n) : 
         generate_captcha(4)
     captchas = os.listdir('generated_captcha_for_acc')
-    for i in range(n-10) : 
+    for i in range(n-5) : 
         print(i)
         cracked = feature_extractor_and_labeler(model, captchas[i])
         # time.sleep(0.5)
@@ -126,6 +126,7 @@ def test(n) :
         if matches[i+1]-matches[i] > 5 : 
             gap += 1
     print(gap)
+    print(gap/len(matches))
 
-test(1000)
+test(200)
     

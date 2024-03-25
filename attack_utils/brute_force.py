@@ -41,7 +41,7 @@ class BruteForceCracker:
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password, num_iter=3):
+    def crack(self, password, num_iter=10):
         for i in range(num_iter) : 
             print("--------- {} captcha try -------------".format(i+1))
             current_captcha = retrieve_captcha_images(self.url, number_iter=1)
@@ -169,6 +169,6 @@ if __name__ == '__main__':
 """
     # print(banner)
     #retrieve_captcha_images("http://localhost:3006/auth/login", 1)
-    #main()
-    retrieve_captcha_images("http://localhost:3006/auth/login?captchaType=Python", number_iter=3)
-
+    main()
+    #retrieve_captcha_images("http://localhost:3006/auth/login?captchaType=Python", number_iter=3)
+    #fetch_captcha("http://localhost:3006/auth/login?captchaType=Python")
