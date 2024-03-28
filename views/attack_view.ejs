@@ -58,43 +58,43 @@
     }
 </style>
 
-<div id="#attackView">
+
+<div id="attackView">
     <button id="executeBtn">Execute Python Code</button>
-    <div class="spinner" id="spinner"></div>
+    <div class="spinner" id="spinner" style="display: none;"></div>
     <div id="outputContainer"></div>
 
     <script>
         const executeBtn = document.getElementById('executeBtn');
         const outputContainer = document.getElementById('outputContainer');
         const spinner = document.getElementById('spinner');
+        let eventSource;
 
         executeBtn.addEventListener('click', () => {
             // Clear output container
             outputContainer.innerText = 'Executing Python code...\n';
             spinner.style.display = 'block';
 
-            // Send request to execute Python code
-            fetch('/attackPanel/launchAttack')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to execute Python code.');
-                    }
-                    // Read response as text and display dynamically
-                    return response.text();
-                })
-                .then(outputData => {
-                    // Append output data to output container
-                    outputContainer.innerText += outputData;
-                    // Automatically scroll to the bottom of the container
-                    outputContainer.scrollTop = outputContainer.scrollHeight;
-                    // Hide spinner
-                    spinner.style.display = 'none';
-                })
-                .catch(error => {
-                    outputContainer.innerText += `Error: ${error.message}\n`;
-                    // Hide spinner
-                    spinner.style.display = 'none';
-                });
+            // Create a new event source
+            eventSource = new EventSource('/attackPanel/streamOutput');
+            
+            // Event listener for receiving messages from server
+            eventSource.onmessage = function(event) {
+                // Append received data to output container
+                outputContainer.innerText += event.data + '\n';
+                // Automatically scroll to the bottom of the container
+                outputContainer.scrollTop = outputContainer.scrollHeight;
+            };
+
+            // Hide spinner
+            spinner.style.display = 'none';
         });
+
+        // Close the event source connection when leaving the page
+        window.onbeforeunload = function() {
+            if (eventSource) {
+                eventSource.close();
+            }
+        };
     </script>
 </div>
