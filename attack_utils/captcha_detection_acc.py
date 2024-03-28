@@ -14,7 +14,7 @@ import time
 
 def generate_captcha(captcha_length, width=500, height=150):
     characters = string.ascii_letters + string.digits
-    characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
+    #characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
 
     captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
 
@@ -29,7 +29,7 @@ def generate_captcha(captcha_length, width=500, height=150):
     captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
 
-def feature_extractor_and_labeler(model, captcha) :
+def feature_extractor_and_labeler(model, captcha, print_in_test=True) :
     #captcha = os.listdir("generated_captcha_for_acc")[0]
     real_characters = list(captcha[:4])
     # folder_path = os.path.join(os.getcwd(),'characters_for_acc')
@@ -53,14 +53,15 @@ def feature_extractor_and_labeler(model, captcha) :
     images = convert_to_tfds(images)
     labeled_data = model.predict(images)
     result = label_to_chr_emnist(tf.argmax(tf.nn.softmax(labeled_data, axis=-1), axis=-1))
-    print(''.join([str(j).lower() for j in result]), ''.join([str(j).lower() for j in real_characters]))
+    if print_in_test :
+        print(''.join([str(j).lower() for j in result]), ''.join([str(j).lower() for j in real_characters]))
     for i,char in enumerate(result) : 
         if str(char).lower() != str(real_characters[i]).lower() : 
             return 0
     return 1
     
 
-def label(model) : 
+def label(model, print_in_test=True) : 
     real_characters = []
     captcha = os.listdir('generated_captcha_for_acc')[0]
     real_characters = list(captcha[:4])
@@ -77,7 +78,8 @@ def label(model) :
         return 2
     labeled_data = model.predict(images)
     result = label_to_chr_emnist(tf.argmax(tf.nn.softmax(labeled_data, axis=-1), axis=-1))
-    print(''.join([str(j).lower() for j in result]), ''.join([str(j).lower() for j in real_characters]))
+    if print_in_test :
+        print(''.join([str(j).lower() for j in result]), ''.join([str(j).lower() for j in real_characters]))
     for i,char in enumerate(result) : 
         if str(char).lower() != str(real_characters[i]).lower() : 
             return 0
@@ -91,7 +93,7 @@ def label(model) :
 #         yield captchas[indice]
 
 
-def test(n) : 
+def test(n, print_in_test=True) : 
     model = get_attacker_from_ckpt_python()
     iterator = 0
     accuracy = 0
@@ -105,9 +107,9 @@ def test(n) :
     for i in range(n) : 
         generate_captcha(4)
     captchas = os.listdir('generated_captcha_for_acc')
-    for i in range(n-5) : 
+    for i in range(n) : 
         print(i)
-        cracked = feature_extractor_and_labeler(model, captchas[i])
+        cracked = feature_extractor_and_labeler(model, captchas[i], print_in_test=True)
         # time.sleep(0.5)
         # cracked = label(model)
         # time.sleep(0.1)
@@ -117,16 +119,30 @@ def test(n) :
             matches.append(i)
             accuracy += 1
         iterator += 1
-    print(iterator)
-    print(accuracy)
-    print(f"the captcha accuracy is {accuracy/iterator}")
-    print(matches)
+    if print_in_test : 
+        print(iterator)
+        print(accuracy)
+        print(f"the captcha accuracy is : {accuracy/iterator*100:.2f}%")
+        print(matches)
     gap = 0
+    maximal_gap = 5
     for i in range(len(matches)-1) : 
-        if matches[i+1]-matches[i] > 5 : 
+        if matches[i+1]-matches[i] > maximal_gap : 
             gap += 1
-    print(gap)
-    print(gap/len(matches))
+    if print_in_test : 
+        print(gap)
+        print(f"The pourcentage of large gaps (>{maximal_gap}) between correct answers : {gap/len(matches)*100:.2f}%")
+    return accuracy/iterator*100
 
 test(200)
     
+def low_loops(n, m) : 
+    error = 0
+    for i in range(n) : 
+        acc = test(m, print_in_test=False)
+        print(f"Model accuracy for iteration {i} using {m} captchas : {acc}")
+        if acc < 100/m - 1 : 
+            error += 1
+    print(f"number of times the model didnt find any correct answer : {error}")
+
+#low_loops(200,5)

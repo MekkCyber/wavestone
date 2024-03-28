@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def convert_to_tfds(data, labels=None, batch_size=8) :
+def convert_to_tfds(data, labels=None, batch_size=4) :
     if labels is None : 
         def normalize_img(image):
             return tf.cast(image, tf.float32) / 255.

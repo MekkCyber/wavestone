@@ -16,6 +16,7 @@ import cv2
 from io import BytesIO
 from urllib.request import urlopen
 
+<<<<<<< HEAD
 
 
 print (""" 
@@ -30,6 +31,9 @@ print ("""
 sys.stdout.flush()
 
 CAPTCHA_TYPE = 0
+=======
+CAPTCHA_TYPE = 1
+>>>>>>> 0e63cbfb581b6b550ef98707bd43382fa3b49ba3
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -43,7 +47,7 @@ class BruteForceCracker:
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password, num_iter=2):
+    def crack(self, password, num_iter=5):
         for i in range(num_iter) : 
             print("--------- {} captcha try -------------".format(i+1))
             current_captcha = retrieve_captcha_images(self.url, number_iter=1)
@@ -172,7 +176,7 @@ def main():
         cracker = BruteForceCracker(url, username, error, emnist_model)
         ###############################################################
     else : 
-        url = "http://localhost:3006/auth/generateCaptcha"
+        url = "http://localhost:3006/auth/login?captchaType=Python"
         ###################### Python Captcha #########################
         python_model = get_attacker_from_ckpt_python()
         cracker = BruteForceCracker(url, username, error, python_model)
@@ -180,9 +184,13 @@ def main():
     print("\n\n8/8 : Launching bruteforce cracker with trained attacker model")
     sys.stdout.flush()
 
+<<<<<<< HEAD
 
     threads = []
     with open("passwords.txt", "r") as f:
+=======
+    with open("passwords_.txt", "r") as f:
+>>>>>>> 0e63cbfb581b6b550ef98707bd43382fa3b49ba3
         chunk_size = 1000
         while True:
             passwords = f.readlines(chunk_size)
