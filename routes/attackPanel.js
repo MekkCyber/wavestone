@@ -1,30 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
+const EventEmitter = require('events');
 
 
 //---------- Attack Script ----------//
 
 function launchAttack() {
-    return new Promise((resolve, reject) => {
-        const pythonProcess = spawn('python', ['attack_utils/brute_force.py']);
-        let outputData = '';
+    const emitter = new EventEmitter();
+    process.chdir('./attack_utils');   
 
-        // Capture output data
-        pythonProcess.stdout.on('data', (data) => {
-            outputData += data.toString();
-            // Send output data to resolve promise
-            resolve(outputData);
-        });
-
-        // Handle Python process close event
-        pythonProcess.on('close', (code) => {
-            console.log(`Python script execution finished with code ${code}`);
-            if (code !== 0) {
-                reject(new Error(`Python script execution failed with code ${code}`));
-            }
-        });
+    const pythonProcess = spawn('python', ['./brute_force.py']);
+    
+    // Capture output data dynamically
+    pythonProcess.stdout.on('data', (data) => {
+        const outputData = data.toString();
+        emitter.emit('output', outputData);
     });
+
+    // Handle Python process close event
+    pythonProcess.on('close', (code) => {
+        console.log(`Python script execution finished with code ${code}`);
+        emitter.emit('close', code);
+    });
+
+    return emitter;
 }
 
 //-------- Attack Panel Route --------//
@@ -32,13 +32,25 @@ router.get('/', (req, res) => {
     res.render('attack_view');
 });
 
-router.get('/launchAttack', async (req, res) => {
-    try {
-        const outputData = await launchAttack();
-        res.send(outputData);
-    } catch (error) {
+router.get('/launchAttack', (req, res) => {
+    const attackEmitter = launchAttack();
+
+    // Send output data dynamically as it becomes available
+    attackEmitter.on('output', (outputData) => {
+        res.write(outputData);
+    });
+
+    // Send response when the Python script execution is complete
+    attackEmitter.on('close', (code) => {
+        console.log('Python script execution finished with code:', code);
+        res.end();
+    });
+
+    // Handle errors
+    attackEmitter.on('error', (error) => {
+        console.error('Error occurred during attack:', error);
         res.status(500).send(error.message);
-    }
+    });
 });
 
 
