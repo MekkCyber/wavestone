@@ -1,4 +1,4 @@
-from get_labeler_from_ckpt import get_labeler_from_ckpt_emnist
+from get_attacker_from_ckpt import get_attacker_from_ckpt_emnist
 import tensorflow as tf
 from keras.callbacks import *
 from utils import convert_to_tfds, chr_to_label_emnist
@@ -14,7 +14,7 @@ import shutil
 
 def generate_captcha(captcha_length, width=500, height=150):
     characters = string.ascii_letters + string.digits
-    characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
+    #characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
 
     captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
 
@@ -29,7 +29,7 @@ def generate_captcha(captcha_length, width=500, height=150):
     captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
     captcha.write(captcha_text, captcha_image_file, 'jpeg')
 
-def finetune_emnist(num_captchas=100, epochs=100) :
+def finetune_emnist(num_captchas=300, epochs=100) :
     folder_path = os.path.join(os.getcwd(), 'captchas_for_finetuning')
     if os.path.exists(folder_path):
         shutil.rmtree(folder_path)
@@ -41,7 +41,7 @@ def finetune_emnist(num_captchas=100, epochs=100) :
     labels = []
     captchas = os.listdir('captchas_for_finetuning')
         
-    model = get_labeler_from_ckpt_emnist()
+    model = get_attacker_from_ckpt_emnist()
     images = []
     for i in range(len(captchas)):
         image = cv2.imread(f'captchas_for_finetuning/{captchas[i]}')
@@ -57,23 +57,25 @@ def finetune_emnist(num_captchas=100, epochs=100) :
         labels.extend(chr_to_label_emnist(captchas[i][:4]))
     print("images : ", len(images))
     print("labels : ", len(labels))
-    images = convert_to_tfds(images, labels=labels)
+    images_train = convert_to_tfds(images[:int(len(images)*0.8)], labels=labels[:int(len(labels)*0.8)])
+    images_val = convert_to_tfds(images[int(len(images)*0.8):], labels=labels[int(len(labels)*0.8):])
     ################### Finetuing ########################
-    checkpoint_path = "checkpoints/labeler_cnn_emnist_finetuned/training_5/best.weights.h5"
+    checkpoint_path = "checkpoints/attacker_emnist_finetuned/training_9/best.weights.h5"
     
     cp_callback = ModelCheckpoint(filepath=checkpoint_path,
                                                     save_weights_only=True,
                                                     verbose=1,
                                                     save_best_only=True,
-                                                    monitor='sparse_categorical_accuracy',
+                                                    monitor='val_sparse_categorical_accuracy',
                                                     mode='max')
-    ES = EarlyStopping(monitor='sparse_categorical_accuracy',min_delta=0,verbose=0,restore_best_weights = True,patience=5,mode='max')
-    RLP = ReduceLROnPlateau(monitor='loss',patience=5,factor=0.2,min_lr=0.0001)
+    ES = EarlyStopping(monitor='val_sparse_categorical_accuracy',min_delta=0,verbose=0,restore_best_weights = True,patience=20,mode='max')
+    RLP = ReduceLROnPlateau(monitor='loss',patience=5,factor=0.2,min_lr=0.00005)
 
     model.fit(
-        images,
+        images_train,
         epochs = epochs,
-        callbacks=[cp_callback, ES, RLP]
+        callbacks=[cp_callback, RLP],
+        validation_data = images_val
     )
     ######################################################
 

@@ -17,7 +17,7 @@ def get_attacker_from_ckpt_emnist(checkpoint_path=None) :
 def get_attacker_from_ckpt_python(checkpoint_path=None) : 
     model = attacker_emnist.create_model()
     if checkpoint_path is None : 
-        checkpoint_path = "checkpoints/attacker_emnist_finetuned/training_2/best.weights.h5"
+        checkpoint_path = "checkpoints/attacker_emnist_finetuned/training_8/best.weights.h5"
  
     model.load_weights(checkpoint_path)
     return model

