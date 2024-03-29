@@ -24,6 +24,11 @@ executeBtn.addEventListener('click', () => {
         outputContainer.innerText += event.data + '\n';
         // Automatically scroll to the bottom of the container
         outputContainer.scrollTop = outputContainer.scrollHeight;
+
+        if (event.data.trim() === 'End of data') {
+            // Close the event source
+            eventSource.close();
+        }
     };
 
     // Event listener for when the connection is closed

@@ -27,7 +27,7 @@ function launchAttack(req, res, captchaType) {
         if (buffer.trim() !== '') {
             res.write(`data: ${buffer}\n\n`);
         }
-        res.end(); // End the response stream after script execution
+        res.write('data: End of data\n\n');// End the response stream after script execution
     });
     process.chdir('..');
 }
