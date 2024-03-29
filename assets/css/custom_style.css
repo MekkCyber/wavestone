@@ -50,7 +50,8 @@ img {
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 20px;
-    border-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     
 }
@@ -111,6 +112,7 @@ img {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    width: 40%;
     margin: 4px 2px;
     transition: background-color 0.05s; /* Smooth transition for background-color */
     cursor: pointer;
@@ -121,6 +123,40 @@ img {
     background-color: #FF5733; /* Red on hover */
 }
 
+#captchaMethod, #option1, #option2, #labeler_model {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 10px 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 208px; /* Adjust width to match the button */
+}
+
+
+
+
+
+
+/****************************** attackPanel ******************************/
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#attackPanelTitle {
+    margin: 0;
+    font-size: 32px;
+}
 #attackView {
     font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
     background-color: #222222; /* Set background color to black */
@@ -133,6 +169,7 @@ img {
 .button-container {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
 }
 #outputContainer {
     border: 2px solid #00ff00; /* Add a green border */
@@ -155,7 +192,7 @@ img {
     text-align: center;
     text-decoration: none;
     font-size: 16px;
-    margin: 4px 2px;
+    margin: 10px 20px;
     transition: background-color 0.05s; /* Smooth transition for background-color */
     cursor: pointer;
     border-radius: 10px;
@@ -170,11 +207,29 @@ img {
     width: 20px; /* Set width of spinner */
     height: 20px; /* Set height of spinner */
     animation: spin 1s linear infinite; /* Spin animation */
-    margin-left: 10px; /* Adjust left margin to center spinner */
-    display: none; /* Hide spinner by default */
+    margin: 10px; /* Adjust left margin to center spinner */
+    display: block; /* Hide spinner by default */
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+#captchaTypeSelect {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 10px 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 208px; /* Adjust width to match the button */
+}
+
+#captchaTypeSelect:hover {
+    background-color: #155adb; /* Red on hover */
 }

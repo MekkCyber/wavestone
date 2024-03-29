@@ -7,12 +7,12 @@
             <option value="EMNIST">EMNIST (digits and letter)</option>
             <option value="Python">Python Captcha</option>
         </select>
-        <select>
+        <select id="option1">
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
             <option value="option3">Option 3</option>
         </select>
-        <select>
+        <select id="option2">
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
             <option value="option3">Option 3</option>
@@ -21,18 +21,6 @@
     <div class="horizontal-line"></div>
 
     <div class="attack-setup" style="--num-selectors: 3;">
-        <div>
-            <label>Select a labeler model : </label>
-            <select id="labeler_model" name="">
-                <option value="option1">MNIST</option>
-                <option value="option2">EMNIST</option>
-                <option value="option3">Python</option>
-            </select>
-        </div>
-        <div>
-            <input type="checkbox" id="postprocessing_checkbox" name="postprocessing_checkbox" checked/>
-            <label for="postprocessing_checkbox">Enable Post-Processing</label>
-        </div>
         <div>
             <button id="launch_button">Launch the attack!</button>
         </div>

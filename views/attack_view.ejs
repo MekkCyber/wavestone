@@ -1,16 +1,35 @@
+<header>
+    <h1 id="attackPanelTitle">Automated Attack on Human-Machine Interface with Python Script</h1>
+</header>
+
 <div id="attackView">
     <div class="button-container">
         <div>
             <select id="captchaTypeSelect">
-            <option value="0">MNIST</option>
+            <option value="0" selected>MNIST</option>
             <option value="1">EMNIST</option>
             <option value="2">Python</option>
             </select>
         </div>
         <button id="executeBtn">Execute Python Code</button>
-        <div class="spinner" id="spinner" style="display: none;"></div>
     </div>
+    <div class="spinner" id="spinner" style="visibility: hidden;"></div>
     <div id="outputContainer"></div>
 
     <script type="text/javascript" src="/attack_front_execution.js"></script>
 </div>
+
+<!-- 
+
+<div>
+    <label>Select a labeler model : </label>
+    <select id="labeler_model" name="">
+        <option value="option1">MNIST</option>
+        <option value="option2">EMNIST</option>
+        <option value="option3">Python</option>
+    </select>
+</div>
+ <div>
+    <input type="checkbox" id="postprocessing_checkbox" name="postprocessing_checkbox" checked/>
+    <label for="postprocessing_checkbox">Enable Post-Processing</label>
+</div> -->
