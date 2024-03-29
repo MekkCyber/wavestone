@@ -16,7 +16,6 @@ import cv2
 from io import BytesIO
 from urllib.request import urlopen
 
-<<<<<<< HEAD
 
 
 print (""" 
@@ -31,9 +30,6 @@ print ("""
 sys.stdout.flush()
 
 CAPTCHA_TYPE = 0
-=======
-CAPTCHA_TYPE = 1
->>>>>>> 0e63cbfb581b6b550ef98707bd43382fa3b49ba3
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -132,13 +128,27 @@ def retrieve_captcha_images(url, number_iter=300) :
 
 def main(): 
 
+    global CAPTCHA_TYPE
+    CAPTCHA_TYPE = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+
     error = "Password incorrect! Please try again."
     username="test@test.test"
 
     if CAPTCHA_TYPE == 0 :
         url = "http://localhost:3006/auth/login"
+
+        print("\n\nSelected captcha type :")
+        print("""
+███    ███ ███    ██ ██ ███████ ████████ 
+████  ████ ████   ██ ██ ██         ██    
+██ ████ ██ ██ ██  ██ ██ ███████    ██    
+██  ██  ██ ██  ██ ██ ██      ██    ██    
+██      ██ ██   ████ ██ ███████    ██    
+                                         
+                                         """)
+
         ######################### MNIST Captcha #########################
-        print("######################### Starting attack pipeline #########################")
+        print("\n\n\n######################### Starting attack pipeline #########################")
         print("\n\n1/8 : Retrieving captcha images")
         sys.stdout.flush()
         captcha_images = retrieve_captcha_images("http://localhost:3006/auth/login", number_iter=300)
@@ -167,30 +177,63 @@ def main():
         sys.stdout.flush()
         cracker = BruteForceCracker(url, username, error, trained_model)
         print("Bruteforce cracker initialization complete !")
+        print("\n\n8/8 : Launching bruteforce cracker with trained attacker model")
         sys.stdout.flush()
         ###############################################################
     elif CAPTCHA_TYPE == 1 : 
         url = "http://localhost:3006/auth/login?captchaType=EMNIST"
+        
+        print("\n\nSelected captcha type :")
+        print("""
+███████       ███    ███ ███    ██ ██ ███████ ████████ 
+██            ████  ████ ████   ██ ██ ██         ██    
+█████   █████ ██ ████ ██ ██ ██  ██ ██ ███████    ██    
+██            ██  ██  ██ ██  ██ ██ ██      ██    ██    
+███████       ██      ██ ██   ████ ██ ███████    ██    
+                                                       
+                                                       """)
         ###################### EMNIST Captcha #########################
+        print("\n\n\n######################### Starting attack pipeline #########################")
+        print("\n\n1/3 : Retrieving trained attacker model")
+        sys.stdout.flush()
         emnist_model = get_attacker_from_ckpt_emnist()
+        print("Attacker model successfully loaded !")        
+        print("\n\n2/3 : Initializing bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
         cracker = BruteForceCracker(url, username, error, emnist_model)
+        print("Bruteforce cracker initialization complete !")
+        print("\n\n3/3 : Launching bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
         ###############################################################
     else : 
         url = "http://localhost:3006/auth/login?captchaType=Python"
-        ###################### Python Captcha #########################
-        python_model = get_attacker_from_ckpt_python()
-        cracker = BruteForceCracker(url, username, error, python_model)
-        ###############################################################
-    print("\n\n8/8 : Launching bruteforce cracker with trained attacker model")
-    sys.stdout.flush()
 
-<<<<<<< HEAD
+        print("\n\nSelected captcha type :")
+        print("""
+██████  ██    ██ ████████ ██   ██  ██████  ███    ██ 
+██   ██  ██  ██     ██    ██   ██ ██    ██ ████   ██ 
+██████    ████      ██    ███████ ██    ██ ██ ██  ██ 
+██         ██       ██    ██   ██ ██    ██ ██  ██ ██ 
+██         ██       ██    ██   ██  ██████  ██   ████ 
+                                                     
+                                                     """)
+        ###################### Python Captcha #########################
+        print("\n\n\n######################### Starting attack pipeline #########################")
+        print("\n\n1/3 : Retrieving trained attacker model")
+        sys.stdout.flush()
+        python_model = get_attacker_from_ckpt_python()
+        print("Attacker model successfully loaded !")        
+        print("\n\n2/3 : Initializing bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
+        cracker = BruteForceCracker(url, username, error, python_model)
+        print("Bruteforce cracker initialization complete !")
+        print("\n\n3/3 : Launching bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
+        ###############################################################
+
 
     threads = []
-    with open("passwords.txt", "r") as f:
-=======
     with open("passwords_.txt", "r") as f:
->>>>>>> 0e63cbfb581b6b550ef98707bd43382fa3b49ba3
         chunk_size = 1000
         while True:
             passwords = f.readlines(chunk_size)

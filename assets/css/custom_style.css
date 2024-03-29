@@ -121,3 +121,60 @@ img {
     background-color: #FF5733; /* Red on hover */
 }
 
+#attackView {
+    font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
+    background-color: #222222; /* Set background color to black */
+    padding: 20px; /* Add some padding for aesthetics */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.button-container {
+    display: flex;
+    align-items: center;
+}
+#outputContainer {
+    border: 2px solid #00ff00; /* Add a green border */
+    color: #00ff00; /* Set text color to green */
+    padding: 20px; /* Add padding inside the container */
+    width: 100%;
+    margin-top: 10px;
+    background-color: #000; /* Set background color to black */
+    overflow-y: scroll; /* Enable vertical scrolling if content overflows */
+    max-height: 600px; /* Limit the height to provide a scrolling area */
+    white-space: pre; /* Preserve whitespace and line breaks exactly as they appear */
+    border-radius: 10px;
+    margin-bottom: 20px; /* Add margin at the bottom */
+}
+#executeBtn {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition: background-color 0.05s; /* Smooth transition for background-color */
+    cursor: pointer;
+    border-radius: 10px;
+}
+#executeBtn:hover {
+    background-color: #FF5733; /* Red on hover */
+}
+.spinner {
+    border: 4px solid #f3f3f3; /* Light grey border */
+    border-top: 4px solid #3498db; /* Blue border for spinner animation */
+    border-radius: 50%; /* Rounded border */
+    width: 20px; /* Set width of spinner */
+    height: 20px; /* Set height of spinner */
+    animation: spin 1s linear infinite; /* Spin animation */
+    margin-left: 10px; /* Adjust left margin to center spinner */
+    display: none; /* Hide spinner by default */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

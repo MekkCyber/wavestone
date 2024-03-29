@@ -4,10 +4,10 @@ const { spawn } = require('child_process');
 
 //---------- Attack Script ----------//
 
-function launchAttack(req, res) {
+function launchAttack(req, res, captchaType) {
     process.chdir('./attack_utils');
 
-    const pythonProcess = spawn('python', ['./brute_force.py']);
+    const pythonProcess = spawn('python', ['./brute_force.py', captchaType.toString()]);
     let buffer = ''; // Buffer for storing output until newline is encountered
 
     // Stream data asynchronously
@@ -39,22 +39,17 @@ router.get('/', (req, res) => {
 
 router.get('/launchAttack', (req, res) => {
     res.status(200).end(); // Send initial response to start the event stream
-
-    // Start the attack and stream output
-    launchAttack(req, res);
 });
 
 router.get('/streamOutput', (req, res) => {
     // Set headers for SSE
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
 
-    // Send a comment to keep the connection alive
-    res.write(': keep-alive\n\n');
-
+    // Extract the captcha type from the query parameters
+    const captchaType = req.query.captchaType || 0; // Default to 0 if not provided
     // Start the attack and stream output
-    launchAttack(req, res);
+    launchAttack(req, res, captchaType);
 });
 
 module.exports = router;
