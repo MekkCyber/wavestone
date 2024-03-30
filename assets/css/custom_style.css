@@ -207,7 +207,7 @@ header {
     width: 20px; /* Set width of spinner */
     height: 20px; /* Set height of spinner */
     animation: spin 1s linear infinite; /* Spin animation */
-    margin: 10px; /* Adjust left margin to center spinner */
+    margin: 5px; /* Adjust left margin to center spinner */
     display: block; /* Hide spinner by default */
 }
 
@@ -232,4 +232,17 @@ header {
 
 #captchaTypeSelect:hover {
     background-color: #155adb; /* Red on hover */
+}
+
+
+.chart-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+canvas {
+    max-width: 200px; /* Adjust as needed */
+    margin: 0 10px; /* Adjust spacing between charts */
+    max-height: 300px;
 }

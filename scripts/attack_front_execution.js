@@ -1,3 +1,6 @@
+import { extractInformation, updatePieCharts } from './statistics_dashboard.js';
+
+
 const executeBtn = document.getElementById('executeBtn');
 const outputContainer = document.getElementById('outputContainer');
 const spinner = document.getElementById('spinner');
@@ -31,10 +34,14 @@ executeBtn.addEventListener('click', () => {
     // Event listener for receiving messages from server
     eventSource.onmessage = function(event) {
         if (event.data.trim() === 'End of data') {
+            const extractedInfo = extractInformation(outputContainer.innerText);
             // Close the event source
             eventSource.close();
             // Hide spinner
             spinner.style.visibility = 'hidden';
+            if (captchaType === '0' ){
+                updatePieCharts(extractedInfo);
+            }
         }
         else {
             // Append received data to output container

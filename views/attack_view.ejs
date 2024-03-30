@@ -16,20 +16,18 @@
     <div class="spinner" id="spinner" style="visibility: hidden;"></div>
     <div id="outputContainer"></div>
 
-    <script type="text/javascript" src="/attack_front_execution.js"></script>
+  
+    <div class="chart-container">
+        <canvas id="lossPieChart"></canvas>
+        <canvas id="accuracyPieChart"></canvas>
+        <canvas id="sparseAccuracyPieChart"></canvas>
+    </div>
+    
 </div>
 
-<!-- 
 
-<div>
-    <label>Select a labeler model : </label>
-    <select id="labeler_model" name="">
-        <option value="option1">MNIST</option>
-        <option value="option2">EMNIST</option>
-        <option value="option3">Python</option>
-    </select>
-</div>
- <div>
-    <input type="checkbox" id="postprocessing_checkbox" name="postprocessing_checkbox" checked/>
-    <label for="postprocessing_checkbox">Enable Post-Processing</label>
-</div> -->
+<script type="module" src="/attack_front_execution.js"></script>
+<script type="module" src="/statistics_dashboard.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
