@@ -7,9 +7,14 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import log_loss
 from dl_models import labeler_cnn_mnist
 from dl_models import attacker_emnist
-
-
-
+from get_attacker_from_ckpt import get_attacker_from_ckpt_python
+import shutil
+import string
+import random
+import cv2
+from feature_extractor import feature_extraction
+from utils import convert_to_tfds
+from captcha.image import ImageCaptcha
 
 
 def output_metrics(CaptchaType, model):
@@ -56,8 +61,6 @@ def output_metrics(CaptchaType, model):
 
         evaluate_with_metrics(model, ds_test)
         
-
-        
         # Additional Information
         print("\nAdditional Information:")
         print("Number of trainable parameters: {}".format(
@@ -71,7 +74,21 @@ def output_metrics(CaptchaType, model):
     
     #Model PYTHON
     elif CaptchaType == 2:
-        pass
+        print("Model Summary:")
+        model.summary()
+       
+        evaluate_with_metrics_python(100)
+        
+        # Additional Information
+        print("\nAdditional Information:")
+        print("Number of trainable parameters: {}".format(
+            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
+        print("Number of non-trainable parameters: {}".format(
+            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
+        print("Input shape: {}".format(model.input_shape))
+        print("Output shape: {}".format(model.output_shape))
+        print("Optimizer: {}".format(model.optimizer.get_config()))
+        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
     
     #Model ATTACKER for MNIST
     elif CaptchaType == 3:
@@ -98,17 +115,17 @@ def output_metrics(CaptchaType, model):
         print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
 
 
-
-
-
-def evaluate_with_metrics(model, ds_test, verbose=2):
+def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, verbose=2):
     # Evaluate the model
     num_classes = get_num_classes_from_model(model)
     
     # Predict on test data
-    predictions = model.predict(ds_test)
-    y_true = np.concatenate([y for x, y in ds_test], axis=0)
-    y_pred = np.argmax(predictions, axis=1)
+    if ds_test : 
+        predictions = model.predict(ds_test)
+    if not y_true : 
+        y_true = np.concatenate([y for x, y in ds_test], axis=0)
+    if not y_pred : 
+        y_pred = np.argmax(predictions, axis=1)
     
     # Compute confusion matrix
     conf_matrix = confusion_matrix(y_true, y_pred, labels=np.arange(num_classes))
@@ -135,7 +152,6 @@ def evaluate_with_metrics(model, ds_test, verbose=2):
     # loss, acc = model.evaluate(ds_test, verbose=2)
     # print("Loss evaluate : {:5.2f}%".format(loss))
     # print("Accuracy  evaluate : ", 100 * acc)
-
     
     print("Loss:", loss)
     print("Accuracy:", 100*sum(accuracy)/len(accuracy))
@@ -146,7 +162,6 @@ def evaluate_with_metrics(model, ds_test, verbose=2):
     print("F1-Score:", "{:.2f}".format(100*sum(f1_score)/len(f1_score)))
 
 
-
 def get_num_classes_from_model(model):
     # Get the last layer of the model
     last_layer = model.layers[-1]
@@ -155,3 +170,56 @@ def get_num_classes_from_model(model):
         return last_layer.units
     else:
         raise ValueError("Last layer is not a Dense layer")
+    
+
+def evaluate_with_metrics_python(num_captchas) : 
+    model = get_attacker_from_ckpt_python()
+
+    folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
+    
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)
+    os.makedirs(folder_path)
+    
+    for i in range(num_captchas) : 
+        generate_captcha(4)
+    captchas = os.listdir('generated_captcha_for_acc')
+
+    true_labels = []
+    predicted_labels = []
+    images = []
+    for i in range(num_captchas) : 
+        captcha = captchas[i]
+
+        image = cv2.imread(f'generated_captcha_for_acc/{captcha}')
+        characters = feature_extraction(image) 
+        if len(characters) < 4 : 
+            continue
+        for c in characters : 
+            if c.size == 0 : 
+                break
+            else :
+                images.append(image)
+        true_labels.extend(list(captcha[:4]))
+    images = convert_to_tfds(images)
+    predicted_labels = model.predict(images)
+    predicted_labels = tf.argmax(tf.nn.softmax(predicted_labels, axis=-1), axis=-1)
+    evaluate_with_metrics(model,y_true=true_labels,y_pred=predicted_labels)
+
+
+def generate_captcha(captcha_length, width=500, height=150):
+    characters = string.ascii_letters + string.digits
+    #characters = 'abcdefghijklmnpqrtuvwxyzABCDEFGHJKLMNOPQRTUVWXYZ2346789'
+
+    captcha_text = ''.join(random.choice(characters) for _ in range(captcha_length))  # You can adjust the length as needed
+
+    captcha = ImageCaptcha(
+                           font_sizes=(100,100),
+                           width=width, 
+                           height=height, 
+                          )
+
+    folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
+
+    captcha_image_file = os.path.join(folder_path, f'{captcha_text}.jpeg')
+    captcha.write(captcha_text, captcha_image_file, 'jpeg')
