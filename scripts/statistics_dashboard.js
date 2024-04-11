@@ -71,16 +71,16 @@ export function extractInformation(data) {
       
     const { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score } = info;
       
-    console.log('Loss:', loss);
-    console.log('Accuracy:', accuracy);
-    console.log('False Positive Rate:', falsePositive);
-    console.log('False Negative Rate:', falseNegative);
-    console.log('Precision:', precision);
-    console.log('Recall:', recall);
-    console.log('F1-Score:', f1_score);
+    // console.log('Loss:', loss);
+    // console.log('Accuracy:', accuracy);
+    // console.log('False Positive Rate:', falsePositive);
+    // console.log('False Negative Rate:', falseNegative);
+    // console.log('Precision:', precision);
+    // console.log('Recall:', recall);
+    // console.log('F1-Score:', f1_score);
 
     // Return the extracted information
-    return { accuracy};
+    return info;
 }
 
 let accuracyChart;
@@ -89,18 +89,39 @@ let accuracyChart;
 // Function to update pie charts
 export function updatePieCharts(extractedInfo) {
     // Update or create loss pie chart
-    const { accuracy } = extractedInfo;
+    const { precision, recall, f1_score } = extractedInfo;
     
-    if (accuracyChart) {
-        accuracyChart.data.datasets[0].data[0] = accuracy;
-        accuracyChart.update();
+    if (precisionChart) {
+        precisionChart.data.datasets[0].data[0] = precision;
+        precisionChart.update();
     } else {
-        accuracyChart = new Chart(document.getElementById('accuracyPieChart').getContext('2d'), {
+        precisionChart = new Chart(document.getElementById('precisionPieChart').getContext('2d'), {
             type: 'pie',
             data: {
-                labels: ['Accuracy'],
+                labels: ['Precision'],
                 datasets: [{
-                    data: [accuracy],
+                    data: [precision],
+                    backgroundColor: ['#FF6384']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+    }
+
+
+    if (recallChart) {
+        recallChart.data.datasets[0].data[0] = accuracy;
+        recallChart.update();
+    } else {
+        recallChart = new Chart(document.getElementById('recallPieChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['Recall'],
+                datasets: [{
+                    data: [recall],
                     backgroundColor: ['#36A2EB']
                 }]
             },
@@ -108,6 +129,28 @@ export function updatePieCharts(extractedInfo) {
                 responsive: true
             }
         });
+        
+    }
+
+
+    if (F1Chart) {
+        F1Chart.data.datasets[0].data[0] = accuracy;
+        F1Chart.updaccuracyChartate();
+    } else {
+        F1Chart = new Chart(document.getElementById('f1PieChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['F1-Score'],
+                datasets: [{
+                    data: [f1_score],
+                    backgroundColor: ['#FFCE56']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+        
     }
 
     
