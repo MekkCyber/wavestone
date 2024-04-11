@@ -7,7 +7,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import log_loss
 from dl_models import labeler_cnn_mnist
 from dl_models import attacker_emnist
-from get_attacker_from_ckpt import get_attacker_from_ckpt_python
 import shutil
 import string
 import random
@@ -15,7 +14,7 @@ import cv2
 from feature_extractor import feature_extraction
 from utils import convert_to_tfds
 from captcha.image import ImageCaptcha
-
+from utils import chr_to_label_emnist
 
 def output_metrics(CaptchaType, model):
     """Print loaded model metrics to the screen depending of the CaptchaType."""
@@ -77,7 +76,7 @@ def output_metrics(CaptchaType, model):
         print("Model Summary:")
         model.summary()
        
-        evaluate_with_metrics_python(100)
+        evaluate_with_metrics_python(model, 100)
         
         # Additional Information
         print("\nAdditional Information:")
@@ -172,8 +171,7 @@ def get_num_classes_from_model(model):
         raise ValueError("Last layer is not a Dense layer")
     
 
-def evaluate_with_metrics_python(num_captchas) : 
-    model = get_attacker_from_ckpt_python()
+def evaluate_with_metrics_python(model, num_captchas) : 
 
     folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
     
@@ -198,9 +196,10 @@ def evaluate_with_metrics_python(num_captchas) :
         for c in characters : 
             if c.size == 0 : 
                 break
-            else :
-                images.append(image)
-        true_labels.extend(list(captcha[:4]))
+            resized_image = cv2.resize(c, (28, 28), interpolation=cv2.INTER_AREA)
+            pixels = np.array(resized_image).reshape(28, 28, 1)
+            images.append(pixels)
+        true_labels.extend(chr_to_label_emnist(list(captcha[:4])))
     images = convert_to_tfds(images)
     predicted_labels = model.predict(images)
     predicted_labels = tf.argmax(tf.nn.softmax(predicted_labels, axis=-1), axis=-1)
