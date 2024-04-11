@@ -54,7 +54,7 @@ def output_metrics(CaptchaType, model):
         # Directory containing the EMNIST images organized by labels
         data_dir = os.getcwd() + '/images_dirs/'
 
-        batch_size = 2
+        batch_size = 32
         img_height = 28
         img_width = 28
 
@@ -62,12 +62,13 @@ def output_metrics(CaptchaType, model):
         # Create a TensorFlow dataset
         ds_emnist = tf.keras.utils.image_dataset_from_directory(data_dir,color_mode='grayscale',seed=123,image_size=(img_height, img_width),batch_size=batch_size)
 
-        for batch in ds_emnist.take(1):
-            for image, label in batch:
-                plt.sh
-                image.show()
-                print(label)
-
+        for images, labels in ds_emnist.take(1):
+            for image, label in zip(images, labels):
+                image = tf.squeeze(image)  # Squeeze the image tensor
+                plt.imshow(image.numpy(), cmap='gray')  # Convert to numpy array and display
+                plt.title(label_to_chr_emnist([label.numpy()]))
+                plt.axis('off')
+                plt.show()
 
 
         # Set up model and evaluate similar to MNIST
@@ -85,5 +86,19 @@ def output_metrics(CaptchaType, model):
     #Model PYTHON
     elif CaptchaType == 2:
         pass
+
+
+
+
+def label_to_chr_emnist(arr) : 
+    result = []
+    for elt in arr : 
+        if elt <= 9 : 
+            result.append(elt.numpy())
+        elif elt < 36 : 
+            result.append(chr(elt - 10 + ord('A')))
+        else : 
+            result.append(chr(elt - 36 + ord('a')))
+    return result
 
 
