@@ -7,7 +7,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import log_loss
 from dl_models import labeler_cnn_mnist
 from dl_models import attacker_emnist
-from get_attacker_from_ckpt import get_attacker_from_ckpt_python
 import shutil
 import string
 import random
@@ -77,7 +76,7 @@ def output_metrics(CaptchaType, model):
         print("Model Summary:")
         model.summary()
        
-        evaluate_with_metrics_python(100)
+        evaluate_with_metrics_python(model, 100)
         
         # Additional Information
         print("\nAdditional Information:")
@@ -172,8 +171,7 @@ def get_num_classes_from_model(model):
         raise ValueError("Last layer is not a Dense layer")
     
 
-def evaluate_with_metrics_python(num_captchas) : 
-    model = get_attacker_from_ckpt_python()
+def evaluate_with_metrics_python(model, num_captchas) : 
 
     folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
     
