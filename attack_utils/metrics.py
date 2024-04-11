@@ -119,11 +119,11 @@ def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, verbose
     num_classes = get_num_classes_from_model(model)
     
     # Predict on test data
-    if ds_test : 
+    if ds_test==None : 
         predictions = model.predict(ds_test)
-    if not y_true : 
+    if y_true==None : 
         y_true = np.concatenate([y for x, y in ds_test], axis=0)
-    if not y_pred : 
+    if y_pred==None : 
         y_pred = np.argmax(predictions, axis=1)
     
     # Compute confusion matrix
