@@ -29,6 +29,9 @@ def get_dataset_keras(batch_size=128) :
     val_images = train_images_raw[int(len(train_images_raw)*TRAIN_SPLIT):int(len(train_images_raw)*VAL_SPLIT)]
     val_labels = train_labels_raw[int(len(train_labels_raw)*TRAIN_SPLIT):int(len(train_labels_raw)*VAL_SPLIT)]
 
+    test_images = test_images[0:int(len(test_images)*1)]
+    test_labels = test_labels[0:int(len(test_labels)*1)]
+
     # train_labels = to_categorical(train_labels)
     # val_labels = to_categorical(val_labels)
     # test_labels = to_categorical(test_labels)

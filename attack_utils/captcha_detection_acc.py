@@ -53,6 +53,7 @@ def feature_extractor_and_labeler(model, captcha, print_in_test=True) :
     images = convert_to_tfds(images)
     labeled_data = model.predict(images)
     result = label_to_chr_emnist(tf.argmax(tf.nn.softmax(labeled_data, axis=-1), axis=-1))
+    
     if print_in_test :
         print(''.join([str(j).lower() for j in result]), ''.join([str(j).lower() for j in real_characters]))
     for i,char in enumerate(result) : 
