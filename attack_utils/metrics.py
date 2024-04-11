@@ -114,7 +114,7 @@ def output_metrics(CaptchaType, model):
         print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
 
 
-def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, verbose=2):
+def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, predictions=None):
     # Evaluate the model
     num_classes = get_num_classes_from_model(model)
     
@@ -135,7 +135,6 @@ def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, verbose
     tp = np.diag(conf_matrix)
     tn = conf_matrix.sum() - (fp + fn + tp)
     
-
     loss = log_loss(y_true, predictions)
     accuracy = (tp + tn)/(tp + fp + tn + fn)
     false_positive_rate = fp / (fp + tn)
@@ -202,8 +201,9 @@ def evaluate_with_metrics_python(model, num_captchas) :
         true_labels.extend(chr_to_label_emnist(list(captcha[:4])))
     images = convert_to_tfds(images)
     predicted_labels = model.predict(images)
-    predicted_labels = tf.argmax(tf.nn.softmax(predicted_labels, axis=-1), axis=-1)
-    evaluate_with_metrics(model,y_true=true_labels,y_pred=predicted_labels)
+    predictions = tf.nn.softmax(predicted_labels, axis=-1)
+    predicted_labels = tf.argmax(predictions, axis=-1)
+    evaluate_with_metrics(model,y_true=true_labels,y_pred=predicted_labels, predictions=predictions)
 
 
 def generate_captcha(captcha_length, width=500, height=150):
