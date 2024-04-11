@@ -17,7 +17,7 @@ def output_metrics(CaptchaType, model):
     # Model MNIST
     if CaptchaType == 0:
         # Print model summary
-        print("Model Summary for MNIST:")
+        print("Model Summary for MNIST labeler :")
         model.summary()
 
         # Load MNIST test dataset
@@ -54,21 +54,13 @@ def output_metrics(CaptchaType, model):
         # Directory containing the EMNIST images organized by labels
         data_dir = os.getcwd() + '/images_dirs/'
 
-        batch_size = 32
+        batch_size = 2
         img_height = 28
         img_width = 28
 
 
         # Create a TensorFlow dataset
         ds_emnist = tf.keras.utils.image_dataset_from_directory(data_dir,color_mode='grayscale',seed=123,image_size=(img_height, img_width),batch_size=batch_size)
-
-        for images, labels in ds_emnist.take(1):
-            for image, label in zip(images, labels):
-                image = tf.squeeze(image)  # Squeeze the image tensor
-                plt.imshow(image.numpy(), cmap='gray')  # Convert to numpy array and display
-                plt.title(label_to_chr_emnist([label.numpy()]))
-                plt.axis('off')
-                plt.show()
 
 
         # Set up model and evaluate similar to MNIST
@@ -86,6 +78,35 @@ def output_metrics(CaptchaType, model):
     #Model PYTHON
     elif CaptchaType == 2:
         pass
+    
+    #Model ATTACKER for MNIST
+    elif CaptchaType == 3:
+        # Print model summary
+        print("Model Summary for MNIST Attacker :")
+        model.summary()
+
+        # Load MNIST test dataset
+        _, _, ds_test = labeler_cnn_mnist.get_dataset_keras()
+
+        # Evaluate the model on the test dataset
+        loss, accuracy = model.evaluate(ds_test, verbose=2)
+
+        # Print evaluation metrics
+        print("\nEvaluation Metrics:")
+        print("Loss: {:.4f}".format(loss))
+        print("Accuracy: {:.2f}%".format(accuracy * 100))
+
+        # Additional Information
+        print("\nAdditional Information:")
+        print("Number of trainable parameters: {}".format(
+            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
+        print("Number of non-trainable parameters: {}".format(
+            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
+        print("Input shape: {}".format(model.input_shape))
+        print("Output shape: {}".format(model.output_shape))
+        print("Optimizer: {}".format(model.optimizer.get_config()))
+        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
+
 
 
 

@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 function launchAttack(req, res, captchaType, iteration, lr) {
     process.chdir('./attack_utils');
 
-    const pythonProcess = spawn('python', ['./bruteforce_params.py', captchaType.toString(), iteration, lr]);
+    const pythonProcess = spawn('python', ['./brute_force.py', captchaType.toString(), iteration, lr]);
     let buffer = ''; // Buffer for storing output until newline is encountered
 
     // Stream data asynchronously

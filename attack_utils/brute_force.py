@@ -15,6 +15,7 @@ import tensorflow as tf
 import cv2
 from io import BytesIO
 from urllib.request import urlopen
+from metrics import output_metrics
 
 
 BEGIN = """ 
@@ -71,9 +72,7 @@ DONE = """
 print (BEGIN)
 sys.stdout.flush()
 
-CAPTCHA_TYPE = sys.argv[1] if len(sys.argv) >= 2 else 0
-NUM_ITERATIONS = sys.argv[2] if len(sys.argv) >= 3 else 5
-LR_FOR_MNIST = sys.argv[3] if len(sys.argv) >= 4 else 0.001
+
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -173,7 +172,11 @@ def retrieve_captcha_images(url, number_iter=300) :
 def main(): 
 
     global CAPTCHA_TYPE
-    CAPTCHA_TYPE = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    global NUM_ITERATIONS
+    global LR_FOR_MNIST
+    CAPTCHA_TYPE = int(sys.argv[1]) if len(sys.argv) >= 2 else 0
+    NUM_ITERATIONS = int(sys.argv[2]) if len(sys.argv) >= 3 else 5
+    LR_FOR_MNIST = float(sys.argv[3]) if len(sys.argv) >= 4 else 0.001
 
     error = "Password incorrect! Please try again."
     username="test@test.test"
@@ -209,7 +212,8 @@ def main():
         print("\n\n6/8 : Training attacker model")
         sys.stdout.flush()
         trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
-        print("Attacker model successfully trained !")
+        print("Attacker model successfully trained !\n")
+        output_metrics(3, trained_model)
         print("\n\n7/8 : Initializing bruteforce cracker with trained attacker model")
         sys.stdout.flush()
         cracker = BruteForceCracker(url, username, error, trained_model)
