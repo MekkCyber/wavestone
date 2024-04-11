@@ -243,3 +243,7 @@ canvas {
     margin: 0 10px; /* Adjust spacing between charts */
     max-height: 300px;
 }
+
+#iteration, #lr {
+    border-radius: 5px;
+}
