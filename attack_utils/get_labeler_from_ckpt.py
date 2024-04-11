@@ -10,7 +10,7 @@ def get_labeler_from_ckpt_mnist(checkpoint_path=None) :
     _, _, ds_test = labeler_cnn_mnist.get_dataset_keras()
     loss, acc = model.evaluate(ds_test, verbose=2)
     print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
-
+    
     return model
 
 

@@ -71,7 +71,9 @@ DONE = """
 print (BEGIN)
 sys.stdout.flush()
 
-CAPTCHA_TYPE = 0
+CAPTCHA_TYPE = sys.argv[1] if len(sys.argv) >= 2 else 0
+NUM_ITERATIONS = sys.argv[2] if len(sys.argv) >= 3 else 5
+LR_FOR_MNIST = sys.argv[3] if len(sys.argv) >= 4 else 0.001
 
 class BruteForceCracker:
     def __init__(self, url, username, error_message_password, trained_model):
@@ -127,7 +129,7 @@ def crack_passwords(passwords, cracker):
         count += 1
         password = password.strip()
         print("Trying Password: {} Time For => {}".format(count, password))
-        if cracker.crack(password):
+        if cracker.crack(password, num_iter=NUM_ITERATIONS):
             return
     print("No Password Found !")
 
@@ -202,7 +204,7 @@ def main():
         print("Attack images successfully converted !")
         print("\n\n5/8 : Creating attacker Neural Network")
         sys.stdout.flush()
-        attacker_model = attacker_cnn_mnist.create_model()
+        attacker_model = attacker_cnn_mnist.create_model(lr=LR_FOR_MNIST)
         print("Attacker model successfully created !")
         print("\n\n6/8 : Training attacker model")
         sys.stdout.flush()

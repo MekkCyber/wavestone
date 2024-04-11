@@ -4,6 +4,7 @@ import { extractInformation, updatePieCharts } from './statistics_dashboard.js';
 const executeBtn = document.getElementById('executeBtn');
 const outputContainer = document.getElementById('outputContainer');
 const spinner = document.getElementById('spinner');
+
 let eventSource;
 
 
@@ -18,6 +19,8 @@ window.onload = function() {
 
 executeBtn.addEventListener('click', () => {
     const captchaType = document.getElementById('captchaTypeSelect').value;
+    const lr = document.getElementById('lr').value;
+    const iteration = document.getElementById('iteration').value;
     // Clear output container
     outputContainer.innerText = 'Executing Python code...\n';
     spinner.style.visibility = 'visible';
@@ -29,7 +32,7 @@ executeBtn.addEventListener('click', () => {
     }
 
     // Create a new event source
-    eventSource = new EventSource('/attackPanel/streamOutput?captchaType='+captchaType.toString());
+    eventSource = new EventSource('/attackPanel/streamOutput?captchaType='+captchaType.toString()+'&iteration='+iteration+'&lr='+lr);
 
     // Event listener for receiving messages from server
     eventSource.onmessage = function(event) {

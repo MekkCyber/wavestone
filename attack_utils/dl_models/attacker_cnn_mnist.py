@@ -9,7 +9,7 @@ np.random.seed(seed)
 tf.random.set_seed(seed)
 
 
-def create_model() : 
+def create_model(lr=0.001) : 
     model_conv = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(8, 3, padding="same", activation = "relu", input_shape=(28,28,1)),
         tf.keras.layers.MaxPool2D(2,2),
@@ -27,7 +27,7 @@ def create_model() :
 
 
     model_conv.compile(
-        optimizer = tf.keras.optimizers.Adam(0.001),
+        optimizer = tf.keras.optimizers.Adam(lr),
         loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
         metrics = [tf.keras.metrics.SparseCategoricalAccuracy()]
     )
