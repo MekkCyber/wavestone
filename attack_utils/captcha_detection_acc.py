@@ -134,15 +134,18 @@ def test(n, print_in_test=True) :
         print(f"The pourcentage of large gaps (>{maximal_gap}) between correct answers : {gap/len(matches)*100:.2f}%")
     return accuracy/iterator*100
 
-test(200)
+#test(200)
     
 def low_loops(n, m) : 
     error = 0
     for i in range(n) : 
         acc = test(m, print_in_test=False)
-        print(f"Model accuracy for iteration {i} using {m} captchas : {acc}")
-        if acc < 100/m - 1 : 
+        #print(f"Model accuracy for iteration {i} using {m} captchas : {acc}")
+        if acc == 0 : 
             error += 1
-    print(f"number of times the model didnt find any correct answer : {error}")
+    
+    return error
 
-#low_loops(200,5)
+for i in range(1,6) :
+    error = low_loops(100, i)
+    print(f"number of times the model didnt find any correct answer ({i} captchas) : {error}")

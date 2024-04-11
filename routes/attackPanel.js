@@ -4,10 +4,10 @@ const { spawn } = require('child_process');
 
 //---------- Attack Script ----------//
 
-function launchAttack(req, res, captchaType) {
+function launchAttack(req, res, captchaType, iteration, lr) {
     process.chdir('./attack_utils');
 
-    const pythonProcess = spawn('python', ['./brute_force.py', captchaType.toString()]);
+    const pythonProcess = spawn('python', ['./bruteforce_params.py', captchaType.toString(), iteration, lr]);
     let buffer = ''; // Buffer for storing output until newline is encountered
 
     // Stream data asynchronously
@@ -19,6 +19,16 @@ function launchAttack(req, res, captchaType) {
             res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
         });
     });
+
+    // pythonProcess.stderr.on('data', (data) => {
+    //     console.log(data)
+    //     buffer += data.toString(); // Append data to buffer
+    //     const lines = buffer.split('\n'); // Split buffer into lines
+    //     buffer = lines.pop(); // Update buffer with incomplete line
+    //     lines.forEach((line) => {
+    //         res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
+    //     });
+    // });
 
     // Handle Python process close event
     pythonProcess.on('close', (code) => {
@@ -48,8 +58,10 @@ router.get('/streamOutput', (req, res) => {
 
     // Extract the captcha type from the query parameters
     const captchaType = req.query.captchaType || 0; // Default to 0 if not provided
+    const lr = req.query.lr || 0.001;
+    const iteration = req.query.iteration || 5
     // Start the attack and stream output
-    launchAttack(req, res, captchaType);
+    launchAttack(req, res, captchaType, iteration, lr);
 });
 
 module.exports = router;
