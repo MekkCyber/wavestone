@@ -119,7 +119,7 @@ def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, verbose
     num_classes = get_num_classes_from_model(model)
     
     # Predict on test data
-    if ds_test==None : 
+    if ds_test : 
         predictions = model.predict(ds_test)
     if y_true==None : 
         y_true = np.concatenate([y for x, y in ds_test], axis=0)
