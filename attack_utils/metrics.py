@@ -14,7 +14,7 @@ import cv2
 from feature_extractor import feature_extraction
 from utils import convert_to_tfds
 from captcha.image import ImageCaptcha
-
+from utils import chr_to_label_emnist
 
 def output_metrics(CaptchaType, model):
     """Print loaded model metrics to the screen depending of the CaptchaType."""
@@ -196,9 +196,10 @@ def evaluate_with_metrics_python(model, num_captchas) :
         for c in characters : 
             if c.size == 0 : 
                 break
-            else :
-                images.append(image)
-        true_labels.extend(list(captcha[:4]))
+            resized_image = cv2.resize(c, (28, 28), interpolation=cv2.INTER_AREA)
+            pixels = np.array(resized_image).reshape(28, 28, 1)
+            images.append(pixels)
+        true_labels.extend(chr_to_label_emnist(list(captcha[:4])))
     images = convert_to_tfds(images)
     predicted_labels = model.predict(images)
     predicted_labels = tf.argmax(tf.nn.softmax(predicted_labels, axis=-1), axis=-1)
