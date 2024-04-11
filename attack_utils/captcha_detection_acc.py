@@ -60,38 +60,34 @@ def feature_extractor_and_labeler(model, captcha, print_in_test=True) :
         if str(char).lower() != str(real_characters[i]).lower() : 
             return 0
     return 1
-    
 
-def label(model, print_in_test=True) : 
-    real_characters = []
-    captcha = os.listdir('generated_captcha_for_acc')[0]
+def feature_extractor_and_labeler_one_character(model, captcha, print_in_test=True) :
+
     real_characters = list(captcha[:4])
-    images = []
-    for i in range(4):
-        
-        character = cv2.imread(f'characters_for_acc/character_{i}.jpg', cv2.IMREAD_GRAYSCALE)
-        #character = cv2.imread(f'tmp_emnist/b/{files[i]}', cv2.IMREAD_GRAYSCALE)
-        pixels = np.array(character).reshape(28, 28, 1)
-        images.append(pixels)
     
+    image = cv2.imread(f'generated_captcha_for_acc/{captcha}')
+    characters = feature_extraction(image)
+    if len(characters)<4 : 
+        return []
+    images = []
+    for index, character in enumerate(characters) : 
+        if character.size == 0 : 
+            return 0
+        resized_image = cv2.resize(character, (28, 28), interpolation=cv2.INTER_AREA)
+        pixels = np.array(resized_image).reshape(28, 28, 1)
+        images.append(pixels)
+        #cv2.imwrite(f'characters_for_acc/character_{i}.jpg', resized_image)
+        #i += 1
     images = convert_to_tfds(images)
-    if len(images) == 0 : 
-        return 2
     labeled_data = model.predict(images)
     result = label_to_chr_emnist(tf.argmax(tf.nn.softmax(labeled_data, axis=-1), axis=-1))
+    
     if print_in_test :
         print(''.join([str(j).lower() for j in result]), ''.join([str(j).lower() for j in real_characters]))
     for i,char in enumerate(result) : 
         if str(char).lower() != str(real_characters[i]).lower() : 
             return 0
     return 1
-
-# def data_generator():
-#     indice = -1
-#     captchas = os.listdir('generated_captcha_for_acc')
-#     while True:
-#         indice += 1
-#         yield captchas[indice]
 
 
 def test(n, print_in_test=True) : 
@@ -111,9 +107,7 @@ def test(n, print_in_test=True) :
     for i in range(n) : 
         print(i)
         cracked = feature_extractor_and_labeler(model, captchas[i], print_in_test=True)
-        # time.sleep(0.5)
-        # cracked = label(model)
-        # time.sleep(0.1)
+       
         if cracked == 2 : 
             continue
         if cracked == 1: 
@@ -147,6 +141,44 @@ def low_loops(n, m) :
     
     return error
 
-for i in range(1,6) :
-    error = low_loops(100, i)
-    print(f"number of times the model didnt find any correct answer ({i} captchas) : {error}")
+# for i in range(1,6) :
+#     error = low_loops(100, i)
+#     print(f"number of times the model didnt find any correct answer ({i} captchas) : {error}")
+
+
+def metrics(num_captchas, print_in_test=True) : 
+    model = get_attacker_from_ckpt_python()
+    iterator = 0
+    accuracy = 0
+    matches = []
+    folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
+    
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)
+    os.makedirs(folder_path)
+    
+    for i in range(num_captchas) : 
+        generate_captcha(4)
+    captchas = os.listdir('generated_captcha_for_acc')
+
+    true_labels = []
+    predicted_labels = []
+    images = []
+    for i in range(num_captchas) : 
+        captcha = captchas[i]
+
+        image = cv2.imread(f'generated_captcha_for_acc/{captcha}')
+        characters = feature_extraction(image) 
+        if len(characters) < 4 : 
+            continue
+        for c in characters : 
+            if c.size == 0 : 
+                break
+            else :
+                images.append(image)
+        true_labels.extend(list(captcha[:4]))
+    images = convert_to_tfds(images)
+    predicted_labels = model.predict(images)
+    predicted_labels = tf.argmax(tf.nn.softmax(predicted_labels, axis=-1), axis=-1)
+        
+    

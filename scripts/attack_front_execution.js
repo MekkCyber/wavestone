@@ -42,9 +42,9 @@ executeBtn.addEventListener('click', () => {
             eventSource.close();
             // Hide spinner
             spinner.style.visibility = 'hidden';
-            if (captchaType === '0' ){
-                updatePieCharts(extractedInfo);
-            }
+            
+            updatePieCharts(extractedInfo);
+
         }
         else {
             // Append received data to output container
