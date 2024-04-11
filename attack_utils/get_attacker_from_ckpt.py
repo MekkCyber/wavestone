@@ -9,8 +9,10 @@ def get_attacker_from_ckpt_emnist(checkpoint_path=None) :
     model.load_weights(checkpoint_path)
     
     #print model metrics
-    output_metrics(1, model)
-
+    #output_metrics(1, model)
+    _, _, ds_test = attacker_emnist.get_dataset_keras()
+    loss, acc = model.evaluate(ds_test, verbose=2)
+    print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
     return model
 
 
