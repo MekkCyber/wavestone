@@ -100,8 +100,6 @@ def output_metrics(CaptchaType, model):
 
         evaluate_with_metrics(model, ds_test)
         
-
-        
         # Additional Information
         print("\nAdditional Information:")
         print("Number of trainable parameters: {}".format(
@@ -208,13 +206,16 @@ def evaluate_with_metrics_python(model, num_captchas) :
         characters = feature_extraction(image) 
         if len(characters) < 4 : 
             continue
-        for c in characters : 
-            if c.size == 0 : 
+        i = 0
+        while i < len(characters) : 
+            if characters[i].size == 0 : 
                 break
-            resized_image = cv2.resize(c, (28, 28), interpolation=cv2.INTER_AREA)
+            resized_image = cv2.resize(characters[i], (28, 28), interpolation=cv2.INTER_AREA)
             pixels = np.array(resized_image).reshape(28, 28, 1)
             images.append(pixels)
-        true_labels.extend(chr_to_label_emnist(list(captcha[:4])))
+            true_labels.extend(chr_to_label_emnist(list(captcha[i])))
+            i += 1
+        
     images = convert_to_tfds(images)
     predicted_labels = model.predict(images)
     predictions = tf.nn.softmax(predicted_labels, axis=-1)

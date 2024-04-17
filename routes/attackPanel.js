@@ -10,18 +10,8 @@ function launchAttack(req, res, captchaType, iteration, lr) {
     const pythonProcess = spawn('python', ['./brute_force.py', captchaType.toString(), iteration, lr]);
     let buffer = ''; // Buffer for storing output until newline is encountered
 
-    // Stream data asynchronously
-    // pythonProcess.stdout.on('data', (data) => {
-    //     buffer += data.toString(); // Append data to buffer
-    //     const lines = buffer.split('\n'); // Split buffer into lines
-    //     buffer = lines.pop(); // Update buffer with incomplete line
-    //     lines.forEach((line) => {
-    //         res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
-    //     });
-    // });
-
-    pythonProcess.stderr.on('data', (data) => {
-        console.log(data)
+    //Stream data asynchronously
+    pythonProcess.stdout.on('data', (data) => {
         buffer += data.toString(); // Append data to buffer
         const lines = buffer.split('\n'); // Split buffer into lines
         buffer = lines.pop(); // Update buffer with incomplete line
@@ -29,6 +19,16 @@ function launchAttack(req, res, captchaType, iteration, lr) {
             res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
         });
     });
+
+    // pythonProcess.stderr.on('data', (data) => {
+    //     console.log(data)
+    //     buffer += data.toString(); // Append data to buffer
+    //     const lines = buffer.split('\n'); // Split buffer into lines
+    //     buffer = lines.pop(); // Update buffer with incomplete line
+    //     lines.forEach((line) => {
+    //         res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
+    //     });
+    // });
 
     // Handle Python process close event
     pythonProcess.on('close', (code) => {

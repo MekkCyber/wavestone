@@ -3,8 +3,6 @@ import pandas as pd
 import tensorflow as tf
 from keras.utils import to_categorical
 
-import matplotlib.pyplot as plt
-
 from keras.layers import *
 from keras.callbacks import *
 
@@ -189,38 +187,38 @@ def train(model_conv, ds_train, ds_val, batch_size=128, epochs=80):
         callbacks=[cp_callback, ES, RLP]
     )
 
-def visualisation(model, train, ds_test, ds_val, ds_train):
-    # Visu
-    x_test_list = []
-    y_test_list = []
+# def visualisation(model, train, ds_test, ds_val, ds_train):
+#     # Visu
+#     x_test_list = []
+#     y_test_list = []
     
-    # Itérer sur le dataset et extraire les valeurs
-    for x, y in ds_test:
-        x_test_list.append(x.numpy())  # Convertir le tenseur TensorFlow en tableau NumPy
-        y_test_list.append(y.numpy())  # Convertir le tenseur TensorFlow en tableau NumPy
+#     # Itérer sur le dataset et extraire les valeurs
+#     for x, y in ds_test:
+#         x_test_list.append(x.numpy())  # Convertir le tenseur TensorFlow en tableau NumPy
+#         y_test_list.append(y.numpy())  # Convertir le tenseur TensorFlow en tableau NumPy
 
-    # Convertir les listes en tableaux NumPy
-    x_test = np.concatenate(x_test_list, axis=0)
-    y_test = np.concatenate(y_test_list, axis=0)
+#     # Convertir les listes en tableaux NumPy
+#     x_test = np.concatenate(x_test_list, axis=0)
+#     y_test = np.concatenate(y_test_list, axis=0)
 
-    # Sélectionnez une image à partir de l'ensemble de test EMNIST
-    image_index = 0  # Remplacez 0 par l'indice de l'image que vous souhaitez utiliser
-    image = x_test[image_index]
-    label = y_test[image_index]
+#     # Sélectionnez une image à partir de l'ensemble de test EMNIST
+#     image_index = 0  # Remplacez 0 par l'indice de l'image que vous souhaitez utiliser
+#     image = x_test[image_index]
+#     label = y_test[image_index]
 
-    # Prétraitement de l'image pour qu'elle soit dans le bon format pour le modèle (déjà présent dans votre code)
-    image = np.expand_dims(image, axis=0)
-    image = np.expand_dims(image, axis=-1)
+#     # Prétraitement de l'image pour qu'elle soit dans le bon format pour le modèle (déjà présent dans votre code)
+#     image = np.expand_dims(image, axis=0)
+#     image = np.expand_dims(image, axis=-1)
 
-    # Prédire le label de l'image en utilisant votre modèle
-    prediction = model.predict(image)
-    predicted_label = np.argmax(prediction)
+#     # Prédire le label de l'image en utilisant votre modèle
+#     prediction = model.predict(image)
+#     predicted_label = np.argmax(prediction)
 
-    # Afficher l'image avec le label prédit
-    plt.imshow(image.squeeze(), cmap='gray')
-    plt.title(f"Label réel : {label}, Label prédit : {predicted_label}")
-    plt.axis('off')
-    plt.show()
+#     # Afficher l'image avec le label prédit
+#     plt.imshow(image.squeeze(), cmap='gray')
+#     plt.title(f"Label réel : {label}, Label prédit : {predicted_label}")
+#     plt.axis('off')
+#     plt.show()
 
 if __name__ == "__main__" : 
     ds_train, ds_val, ds_test = get_dataset_keras()

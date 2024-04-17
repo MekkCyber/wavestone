@@ -10,10 +10,8 @@ from PIL import Image
 import numpy as np 
 from utils import convert_to_tfds, label_to_chr_emnist
 from feature_extractor import feature_extraction
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import cv2
-from io import BytesIO
 from urllib.request import urlopen
 from metrics import output_metrics
 
