@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   node_app:
     build: 
@@ -7,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: captcha_app
     ports:
-      - "3000:3000"
+      - "3006:3006"
     depends_on:
       - mongodb
     environment:
@@ -19,8 +18,12 @@ services:
     container_name: captcha_mongo
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: users
     volumes:
-      - mongodb_data:/data/db
+      - ./mongodb_docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     restart: unless-stopped
 
 volumes:
