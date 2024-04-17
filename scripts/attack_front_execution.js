@@ -1,4 +1,4 @@
-import { extractInformation, updatePieCharts, hideCharts } from './statistics_dashboard.js';
+import { extractInformation, updatePieCharts, displayMetricsTable, erasePreviousMetrics } from './statistics_dashboard.js';
 
 
 const executeBtn = document.getElementById('executeBtn');
@@ -22,7 +22,7 @@ executeBtn.addEventListener('click', () => {
     const lr = document.getElementById('lr').value;
     const iteration = document.getElementById('iteration').value;
     const debug_mode = document.getElementById('debug_mode').checked;
-    hideCharts();
+    erasePreviousMetrics();
     // Clear output container
     outputContainer.innerText = 'Executing Python code...\n';
     spinner.style.visibility = 'visible';
@@ -46,6 +46,7 @@ executeBtn.addEventListener('click', () => {
             spinner.style.visibility = 'hidden';
             
             updatePieCharts(extractedInfo);
+            displayMetricsTable(extractedInfo);
 
         }
         else {

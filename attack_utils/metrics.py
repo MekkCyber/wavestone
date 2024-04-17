@@ -185,7 +185,7 @@ def get_num_classes_from_model(model):
     
 
 def evaluate_with_metrics_python(model, num_captchas) : 
-
+    extended_alphabet = string.ascii_letters + string.digits
     folder_path = os.path.join(os.getcwd(), 'generated_captcha_for_acc')
     
     if os.path.exists(folder_path):
@@ -199,15 +199,21 @@ def evaluate_with_metrics_python(model, num_captchas) :
     true_labels = []
     predicted_labels = []
     images = []
-    for i in range(num_captchas) : 
-        captcha = captchas[i]
-
+    counter = 0
+    j = 0
+    present_characters = set()
+    while counter < 62 or j < num_captchas:
+        captcha = captchas[j]
         image = cv2.imread(f'generated_captcha_for_acc/{captcha}')
         characters = feature_extraction(image) 
         if len(characters) < 4 : 
             continue
         i = 0
         while i < len(characters) : 
+            if captcha[i] not in present_characters:
+                present_characters.add(captcha[i])
+                print(captcha[i])
+                counter += 1
             if characters[i].size == 0 : 
                 break
             resized_image = cv2.resize(characters[i], (28, 28), interpolation=cv2.INTER_AREA)
@@ -215,6 +221,8 @@ def evaluate_with_metrics_python(model, num_captchas) :
             images.append(pixels)
             true_labels.extend(chr_to_label_emnist(list(captcha[i])))
             i += 1
+        j += 1
+        
         
     images = convert_to_tfds(images)
     predicted_labels = model.predict(images)

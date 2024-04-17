@@ -41,7 +41,7 @@ let precisionChart, recallChart, F1Chart;
 
 
 
-export function hideCharts() {
+export function erasePreviousMetrics() {
     if (precisionChart) {
         precisionChart.destroy(); // Destroy the existing chart
         precisionChart = null; // Reset the chart variable
@@ -54,6 +54,8 @@ export function hideCharts() {
         F1Chart.destroy(); // Destroy the existing chart
         F1Chart = null; 
     }
+    const metricsTableContainer = document.getElementById("metricsTableContainer");
+    metricsTableContainer.innerHTML = "";
 }
 
 // Function to update pie charts
@@ -161,6 +163,56 @@ export function updatePieCharts(extractedInfo) {
         });
         
     }
+}
 
-    
+
+
+export function displayMetricsTable(info) {
+    const { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score } = info;
+
+    const tableContainer = document.createElement("div");
+    tableContainer.classList.add("metrics-table-container");
+
+    const table = document.createElement("table");
+    table.classList.add("metrics-table");
+
+    const headers = ["Metric", "Value"];
+
+    const headerRow = document.createElement("tr");
+    headers.forEach(headerText => {
+        const th = document.createElement("th");
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    const metrics = [
+        { name: "Loss", value: loss },
+        { name: "Accuracy", value: accuracy },
+        { name: "False Positive", value: falsePositive },
+        { name: "False Negative", value: falseNegative },
+        { name: "Precision", value: precision },
+        { name: "Recall", value: recall },
+        { name: "F1 Score", value: f1_score }
+    ];
+
+    metrics.forEach(metric => {
+        const row = document.createElement("tr");
+        
+        const metricNameCell = document.createElement("td");
+        metricNameCell.textContent = metric.name;
+        row.appendChild(metricNameCell);
+
+        const metricValueCell = document.createElement("td");
+        metricValueCell.textContent = metric.value;
+        row.appendChild(metricValueCell);
+
+        table.appendChild(row);
+    });
+
+    tableContainer.appendChild(table);
+
+    const metricsTableContainer = document.getElementById("metricsTableContainer");
+    metricsTableContainer.innerHTML = "";
+    metricsTableContainer.appendChild(tableContainer);
 }

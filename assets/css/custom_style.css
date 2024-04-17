@@ -257,3 +257,37 @@ canvas {
     border-radius: 5px;
     margin: 0px 40px;
 }
+
+
+
+
+.metrics-table-container {
+    margin-top: 20px;
+}
+
+.metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5%;
+    overflow: hidden;
+}
+
+.metrics-table th,
+.metrics-table td {
+    padding: 10px;
+}
+
+.metrics-table th {
+    background-color: #555;
+    text-align: left;
+}
+
+.metrics-table tr:nth-child(even) {
+    background-color: #444;
+}
+
+.metrics-table tr:hover {
+    background-color: #555;
+}
