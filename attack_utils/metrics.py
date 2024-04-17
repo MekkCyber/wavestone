@@ -155,8 +155,8 @@ def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, predict
     false_negative_rate = fn / (fn + tp)
     precision = sum(tp) / (sum(tp) + sum(fp))
     recall = tp / (tp + fn)
-    f1_score = 2 / ((1/precision) + (1/recall))
-    
+    f1_score = 2 * precision * recall / (precision + recall)
+        
     # Print evaluation metrics
     print("\nEvaluation Metrics:")
 

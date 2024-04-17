@@ -10,26 +10,17 @@ function launchAttack(req, res, captchaType, iteration, lr, debug) {
     const pythonProcess = spawn('python', ['./brute_force.py', captchaType.toString(), iteration, lr]);
     let buffer = ''; // Buffer for storing output until newline is encountered
 
-<<<<<<< HEAD
-    //Stream data asynchronously
-    pythonProcess.stdout.on('data', (data) => {
-        buffer += data.toString(); // Append data to buffer
-        const lines = buffer.split('\n'); // Split buffer into lines
-        buffer = lines.pop(); // Update buffer with incomplete line
-        lines.forEach((line) => {
-            res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
-=======
+
     // Stream data asynchronously
     if (debug === 'true') {
         pythonProcess.stderr.on('data', (data) => {
-            console.log(data)
+            console.log(data);
             buffer += data.toString(); // Append data to buffer
             const lines = buffer.split('\n'); // Split buffer into lines
             buffer = lines.pop(); // Update buffer with incomplete line
             lines.forEach((line) => {
                 res.write(`data: ${line}\n\n`); // Send each line as Server-Sent Event
             });
->>>>>>> 96901bd8f8aaa606fc4683e9a708107334676aa9
         });
     }
     else {

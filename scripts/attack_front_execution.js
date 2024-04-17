@@ -38,7 +38,7 @@ executeBtn.addEventListener('click', () => {
     // Event listener for receiving messages from server
     eventSource.onmessage = function(event) {
         if (event.data.trim() === 'End of data') {
-            const extractedInfo = extractInformation(outputContainer.innerText);
+            const extractedInfo = extractInformation(outputContainer.innerText, debug_mode);
             // Close the event source
             eventSource.close();
             // Hide spinner

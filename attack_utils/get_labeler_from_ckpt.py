@@ -10,7 +10,7 @@ def get_labeler_from_ckpt_mnist(checkpoint_path=None) :
     model.load_weights(checkpoint_path)
 
     #print model metrics
-    output_metrics(0, model)
+    # output_metrics(0, model)
     
     return model
 
