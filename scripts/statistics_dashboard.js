@@ -2,54 +2,6 @@
 
 
 export function extractInformation(data) {
-    // Regular expressions to match the desired information
-    // const lossRegex = /Loss: ([\d.]+)/;
-    // const accuracyRegex = /Accuracy: ([\d.]+)/;
-    // const FalsePositiveRegex = /False Positive Rate: ([\d.]+)/;
-    // const FalseNegativeRegex = /False Negative Rate: ([\d.]+)/;
-    // const PrecisionRegex = /Precision: ([\d.]+)/;
-    // const RecallRegex = /Recall: ([\d.]+)/;
-    // const F1_ScoreRegex = /F1-Score: ([\d.]+)/;
-    // // Extract loss and accuracy from the data
-    // const lossMatch = data.match(lossRegex);
-    // const accuracyMatch = data.match(accuracyRegex);
-    // const FalsePositiveMatch = data.match(FalsePositiveRegex);
-    // const FalseNegativeMatch = data.match(FalseNegativeRegex);
-    // const PrecisionMatch = data.match(PrecisionRegex);
-    // const RecallMatch = data.match(RecallRegex);
-    // const F1_ScoreMatch = data.match(F1_ScoreRegex);
-
-    // // Initialize variables to store extracted information
-    // let loss = null;
-    // let accuracy = null;
-    // let falsePositive = null;
-    // let falseNegative = null;
-    // let precision = null;
-    // let recall = null;
-    // let f1_score = null;
-
-    // // Check if the information was found and extract it
-    // if (lossMatch && lossMatch.length > 1) {
-    //     loss = parseFloat(lossMatch[1]);
-    // }
-    // if (accuracyMatch && accuracyMatch.length > 1) {
-    //     accuracy = parseFloat(accuracyMatch[1]);
-    // }
-    // if (FalsePositiveMatch && FalsePositiveMatch.length > 1) {
-    //     falsePositive = parseFloat(FalsePositiveMatch[1]);
-    // }
-    // if (FalseNegativeMatch && FalseNegativeMatch.length > 1) {
-    //     falseNegative = parseFloat(FalseNegativeMatch[1]);
-    // }
-    // if (PrecisionMatch && PrecisionMatch.length > 1) {
-    //     precision = parseFloat(PrecisionMatch[1]);
-    // }
-    // if (RecallMatch && RecallMatch.length > 1) {
-    //     recall = parseFloat(RecallMatch[1]);
-    // }
-    // if (F1_ScoreMatch && F1_ScoreMatch.length > 1) {
-    //     f1_score = parseFloat(F1_ScoreMatch[1]);
-    // }
 
 
     const patterns = [

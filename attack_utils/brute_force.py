@@ -96,7 +96,7 @@ class BruteForceCracker:
                 tfds_captcha = convert_to_tfds(current_captcha)
                 preds = tf.argmax(tf.nn.softmax(self.trained_model.predict(tfds_captcha), axis=-1), axis=-1)
                 preds_numpy = label_to_chr_emnist(preds)
-            if CAPTCHA_TYPE == 2 : 
+            if CAPTCHA_TYPE == 2 or CAPTCHA_TYPE == 3 : 
                 characters = feature_extraction(current_captcha[0])
                 if len(characters)<4 : 
                     return 0
@@ -153,7 +153,7 @@ def retrieve_captcha_images(url, number_iter=300) :
         response = requests.get(img_url[i], stream = True)
         if response.status_code == 200:
             image = Image.open(response.raw)
-            if CAPTCHA_TYPE != 2 :
+            if CAPTCHA_TYPE != 2 and CAPTCHA_TYPE != 3:
                 pixels = np.array(list(image.getdata())).reshape(28, 28, 1)
             else : 
                 req = urlopen(img_url[i])

@@ -224,7 +224,7 @@ header {
     margin: 10px 20px;
     cursor: pointer;
     border-radius: 10px;
-    width: 208px; /* Adjust width to match the button */
+    width: 240px !important;
 }
 
 #captchaTypeSelect:hover {
@@ -243,7 +243,17 @@ canvas {
     margin: 0 10px; /* Adjust spacing between charts */
     max-height: 300px;
 }
+#checkbox_debug{
+    width: 200px;
+    vertical-align: middle;
+    display: inline-block; /* Display label and checkbox in the same line */
+    margin: 0px 60px;
+}
+
+
+
 
 #iteration, #lr {
     border-radius: 5px;
+    margin: 0px 40px;
 }
