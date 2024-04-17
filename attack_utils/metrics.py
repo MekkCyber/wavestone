@@ -113,6 +113,22 @@ def output_metrics(CaptchaType, model):
         print("Optimizer: {}".format(model.optimizer.get_config()))
         print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
 
+    elif CaptchaType == 4:
+        print("Model Summary:")
+        model.summary()
+       
+        evaluate_with_metrics_python(model, 100)
+        
+        # Additional Information
+        print("\nAdditional Information:")
+        print("Number of trainable parameters: {}".format(
+            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
+        print("Number of non-trainable parameters: {}".format(
+            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
+        print("Input shape: {}".format(model.input_shape))
+        print("Output shape: {}".format(model.output_shape))
+        print("Optimizer: {}".format(model.optimizer.get_config()))
+        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
 
 def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, predictions=None):
     # Evaluate the model

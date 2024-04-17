@@ -240,14 +240,14 @@ def main():
         print("\n\n3/3 : Launching bruteforce cracker with trained attacker model")
         sys.stdout.flush()
         ###############################################################
-    else : 
+    elif CAPTCHA_TYPE==2 : 
         url = "http://localhost:3006/auth/login?captchaType=Python"
 
         print("\n\nSelected captcha type :")
         print(PYTHON)
         ###################### Python Captcha #########################
         print("\n\n\n######################### Starting attack pipeline #########################")
-        print("\n\n1/3 : Retrieving trained attacker model")
+        print("\n\n1/3 : Retrieving trained Fintuned attacker model")
         sys.stdout.flush()
         python_model = get_attacker_from_ckpt_python()
         print("Attacker model successfully loaded !")
@@ -260,7 +260,25 @@ def main():
         sys.stdout.flush()
         ###############################################################
 
+    else : 
+        url = "http://localhost:3006/auth/login?captchaType=Python"
 
+        print("\n\nSelected captcha type :")
+        print(PYTHON)
+        ###################### Python Captcha #########################
+        print("\n\n\n######################### Starting attack pipeline #########################")
+        print("\n\n1/3 : Retrieving trained Raw attacker model")
+        sys.stdout.flush()
+        python_model = get_attacker_from_ckpt_emnist()
+        print("Attacker model successfully loaded !")
+        output_metrics(4, python_model)
+        print("\n\n2/3 : Initializing bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
+        cracker = BruteForceCracker(url, username, error, python_model)
+        print("Bruteforce cracker initialization complete !")
+        print("\n\n3/3 : Launching bruteforce cracker with trained attacker model")
+        sys.stdout.flush()
+        ###############################################################
     threads = []
     with open("passwords_.txt", "r") as f:
         chunk_size = 1000
