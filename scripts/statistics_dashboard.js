@@ -37,8 +37,24 @@ export function extractInformation(data, debug_mode) {
     return info;
 }
 
-let recallChart, precisionChart, F1Chart;
+let precisionChart, recallChart, F1Chart;
 
+
+
+export function hideCharts() {
+    if (precisionChart) {
+        precisionChart.destroy(); // Destroy the existing chart
+        precisionChart = null; // Reset the chart variable
+    }
+    if (recallChart) {
+        recallChart.destroy(); // Destroy the existing chart
+        recallChart = null; 
+    }
+    if (F1Chart) {
+        F1Chart.destroy(); // Destroy the existing chart
+        F1Chart = null; 
+    }
+}
 
 // Function to update pie charts
 export function updatePieCharts(extractedInfo) {
