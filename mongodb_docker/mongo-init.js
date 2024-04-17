@@ -19,3 +19,10 @@ db.users.insertOne(
     password: "mekk"
   }
 );
+db.users.insertOne(
+    {
+      email: "test@test.test",
+      name: "test",
+      password: "testtest"
+    }
+  );
