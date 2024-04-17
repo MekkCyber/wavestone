@@ -39,14 +39,14 @@ executeBtn.addEventListener('click', () => {
     // Event listener for receiving messages from server
     eventSource.onmessage = function(event) {
         if (event.data.trim() === 'End of data') {
-            const extractedInfo = extractInformation(outputContainer.innerText, debug_mode);
+            const extractedInfo = extractInformation(outputContainer.innerText, captchaType);
             // Close the event source
             eventSource.close();
             // Hide spinner
             spinner.style.visibility = 'hidden';
             
             updatePieCharts(extractedInfo);
-            displayMetricsTable(extractedInfo);
+            displayMetricsTable(extractedInfo, captchaType);
 
         }
         else {

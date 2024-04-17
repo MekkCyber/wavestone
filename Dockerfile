@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 
 WORKDIR /usr/src/app
 
@@ -6,13 +6,26 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN apt-get update && apt-get install -y python3 python3-pip
+# Update package lists
+RUN apt-get update
+
+RUN apt-get install libssl-dev openssl make gcc tar -y
+
+RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tgz
+
+
+RUN tar -xzvf ./Python-3.8.11.tgz
+
+RUN cd ./Python-3.8.11 && ./configure && make && make install
+
+RUN ln -fs /usr/src/app/Python-3.8.11/python /usr/bin/python
 
 COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
+
+RUN /usr/local/bin/python3.8 -m pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3006
 
-CMD [ "npm", "start" ]
+CMD [ "node", "server.js" ]

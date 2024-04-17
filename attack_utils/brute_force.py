@@ -209,7 +209,10 @@ def main():
         print("Attacker model successfully created !")
         print("\n\n6/8 : Training attacker model")
         sys.stdout.flush()
+        start_time = time.time()
         trained_model = attacker_cnn_mnist.train(attacker_model, attacker_dataset, epochs=5)
+        training_time = time.time() - start_time
+        print("Training time:", training_time)
         print("Attacker model successfully trained !\n")
         output_metrics(3, trained_model)
         print("\n\n7/8 : Initializing bruteforce cracker with trained attacker model")
@@ -277,8 +280,9 @@ def main():
         print("\n\n3/3 : Launching bruteforce cracker with trained attacker model")
         sys.stdout.flush()
         ###############################################################
+    start_attack_time = time.time()
     threads = []
-    with open("passwords_.txt", "r") as f:
+    with open("passwords.txt", "r") as f:
         chunk_size = 1000
         while True:
             passwords = f.readlines(chunk_size)
@@ -289,6 +293,8 @@ def main():
             threads.append(t)
     for thread in threads:
         thread.join()
+    attack_time = time.time() - start_attack_time
+    print("Attack time:", attack_time)
 
 if __name__ == '__main__':
     banner = """ 

@@ -224,7 +224,7 @@ header {
     margin: 10px 20px;
     cursor: pointer;
     border-radius: 10px;
-    width: 240px !important;
+    width: 300px !important;
 }
 
 #captchaTypeSelect:hover {

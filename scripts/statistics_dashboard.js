@@ -1,7 +1,7 @@
 // STATISTICS DISPLAY
 
 
-export function extractInformation(data, debug_mode) {
+export function extractInformation(data, captchaType) {
 
 
     const patterns = [
@@ -11,26 +11,42 @@ export function extractInformation(data, debug_mode) {
         { name: 'falseNegative', regex: /False Negative Rate: ([\d.]+)/ },
         { name: 'precision', regex: /Precision: ([\d.]+)/ },
         { name: 'recall', regex: /Recall: ([\d.]+)/ },
-        { name: 'f1_score', regex: /F1-Score: ([\d.]+)/ }
+        { name: 'f1_score', regex: /F1-Score: ([\d.]+)/ },
+        { name: 'nb_parameters', regex: /Number of parameters: ([\d.]+)/ },
+        { name: 'nb_trainable_parameters', regex: /Number of trainable parameters: ([\d.]+)/ },
+        { name: 'nb_non_trainable_parameters', regex: /Number of non-trainable parameters: ([\d.]+)/ },
+        { name: 'learning_rate', regex: /Learning rate: ([\d.]+)/ },
+        { name: 'nb_layers', regex: /Number of layers: ([\d.]+)/ },
+        { name: 'nb_weights', regex: /Number of weights in the model: ([\d.]+)/ },
+        { name: 'attack_time', regex: /Attack time: ([\d.]+)/ }
+
     ];
       
-    const info = {};
+    var info = {};
       
     patterns.forEach(({ name, regex }) => {
       const match = data.match(regex);
       info[name] = match && match.length > 1 ? parseFloat(match[1]) : null;
     });
       
-    const { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score } = info;
+    const { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score, nb_parameters, nb_trainable_parameters, nb_non_trainable_parameters, learning_rate, nb_layers, nb_weights, attack_time } = info;
       
+    if (captchaType === "0"){
+        var training_time_regex = /Training time: ([\d.]+)/
+        var training_time = data.match(training_time_regex)   
+    }
+    else {
+        var training_time = 0.0;
+    }
+    info = { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score, nb_parameters, nb_trainable_parameters, nb_non_trainable_parameters, learning_rate, nb_layers, nb_weights, attack_time, training_time }
     // if (debug_mode === true) {
-    console.log('Loss:', loss);
-    console.log('Accuracy:', accuracy);
-    console.log('False Positive Rate:', falsePositive);
-    console.log('False Negative Rate:', falseNegative);
-    console.log('Precision:', precision);
-    console.log('Recall:', recall);
-    console.log('F1-Score:', f1_score);
+    // console.log('Loss:', loss);
+    // console.log('Accuracy:', accuracy);
+    // console.log('False Positive Rate:', falsePositive);
+    // console.log('False Negative Rate:', falseNegative);
+    // console.log('Precision:', precision);
+    // console.log('Recall:', recall);
+    // console.log('F1-Score:', f1_score);
     // }
 
     // Return the extracted information
@@ -167,8 +183,9 @@ export function updatePieCharts(extractedInfo) {
 
 
 
-export function displayMetricsTable(info) {
-    const { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score } = info;
+export function displayMetricsTable(info, captchaType) {
+    
+    const { loss, accuracy, falsePositive, falseNegative, precision, recall, f1_score, nb_parameters, nb_trainable_parameters, nb_non_trainable_parameters, learning_rate, nb_layers, nb_weights, attack_time, training_time } = info;
 
     const tableContainer = document.createElement("div");
     tableContainer.classList.add("metrics-table-container");
@@ -185,16 +202,40 @@ export function displayMetricsTable(info) {
         headerRow.appendChild(th);
     });
     table.appendChild(headerRow);
-
-    const metrics = [
-        { name: "Loss", value: loss },
-        { name: "Accuracy", value: accuracy },
-        { name: "False Positive", value: falsePositive },
-        { name: "False Negative", value: falseNegative },
-        { name: "Precision", value: precision },
-        { name: "Recall", value: recall },
-        { name: "F1 Score", value: f1_score }
-    ];
+    let metrics;
+    if (captchaType === 0){
+        metrics = [
+            { name: "Attacker Model Training Time", value: training_time.toFixed(2) },
+            { name: "Attacker Duration", value: attack_time.toFixed(2) },
+            { name: "Loss", value: loss.toFixed(2) },
+            // { name: "Accuracy", value: accuracy.toFixed(2) },
+            { name: "False Positive", value: falsePositive.toFixed(2) },
+            { name: "False Negative", value: falseNegative.toFixed(2) },
+            { name: "Precision", value: precision.toFixed(2) },
+            { name: "Recall", value: recall.toFixed(2) },
+            { name: "F1 Score", value: f1_score.toFixed(2) },
+            { name: "Number of Parameters", value: nb_parameters },
+            { name: "Number of trainable Parameters", value: nb_trainable_parameters },
+            { name: "Learning Rate", value: learning_rate.toFixed(4) },
+            { name: "Number of Layers", value: nb_layers }    
+        ];
+    }
+    else {
+        metrics = [
+            { name: "Attacker Duration", value: attack_time.toFixed(2).toString() + ' s' },
+            { name: "Loss", value: loss.toFixed(2) },
+            // { name: "Accuracy", value: accuracy.toFixed(2) },
+            { name: "False Positive", value: falsePositive.toFixed(2) },
+            { name: "False Negative", value: falseNegative.toFixed(2) },
+            { name: "Precision", value: precision.toFixed(2) },
+            { name: "Recall", value: recall.toFixed(2) },
+            { name: "F1 Score", value: f1_score.toFixed(2) },
+            { name: "Number of Parameters", value: nb_parameters },
+            { name: "Number of trainable Parameters", value: nb_trainable_parameters },
+            { name: "Learning Rate", value: learning_rate.toFixed(4) },
+            { name: "Number of Layers", value: nb_layers }    
+        ];
+    }
 
     metrics.forEach(metric => {
         const row = document.createElement("tr");

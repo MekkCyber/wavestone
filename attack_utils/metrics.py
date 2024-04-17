@@ -35,6 +35,8 @@ def output_metrics(CaptchaType, model):
         
         # Additional Information
         print("\nAdditional Information:")
+
+        print("Number of parameters: {}".format(model.count_params()))
         print("Number of trainable parameters: {}".format(
             sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
         print("Number of non-trainable parameters: {}".format(
@@ -43,6 +45,11 @@ def output_metrics(CaptchaType, model):
         print("Output shape: {}".format(model.output_shape))
         print("Optimizer: {}".format(model.optimizer.get_config()))
         print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
+
+        print("Number of layers: {}".format(len(model.layers)))
+        print("Number of weights in the model: {}".format(len(model.weights)))
+        
+        
     
     # Model EMNIST
     elif CaptchaType == 1:
@@ -59,17 +66,7 @@ def output_metrics(CaptchaType, model):
         _, _, ds_test = attacker_emnist.get_dataset_keras()
 
         evaluate_with_metrics(model, ds_test)
-        
-        # Additional Information
-        print("\nAdditional Information:")
-        print("Number of trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
-        print("Number of non-trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
-        print("Input shape: {}".format(model.input_shape))
-        print("Output shape: {}".format(model.output_shape))
-        print("Optimizer: {}".format(model.optimizer.get_config()))
-        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
+        additional_informations(model)
     
     #Model PYTHON
     elif CaptchaType == 2:
@@ -77,17 +74,8 @@ def output_metrics(CaptchaType, model):
         model.summary()
        
         evaluate_with_metrics_python(model, 100)
+        additional_informations(model)
         
-        # Additional Information
-        print("\nAdditional Information:")
-        print("Number of trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
-        print("Number of non-trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
-        print("Input shape: {}".format(model.input_shape))
-        print("Output shape: {}".format(model.output_shape))
-        print("Optimizer: {}".format(model.optimizer.get_config()))
-        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
     
     #Model ATTACKER for MNIST
     elif CaptchaType == 3:
@@ -99,34 +87,39 @@ def output_metrics(CaptchaType, model):
         _, _, ds_test = labeler_cnn_mnist.get_dataset_keras()
 
         evaluate_with_metrics(model, ds_test)
-        
-        # Additional Information
-        print("\nAdditional Information:")
-        print("Number of trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
-        print("Number of non-trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
-        print("Input shape: {}".format(model.input_shape))
-        print("Output shape: {}".format(model.output_shape))
-        print("Optimizer: {}".format(model.optimizer.get_config()))
-        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
+        additional_informations(model)
+
 
     elif CaptchaType == 4:
         print("Model Summary:")
         model.summary()
        
         evaluate_with_metrics_python(model, 100)
+        additional_informations(model)
         
-        # Additional Information
-        print("\nAdditional Information:")
-        print("Number of trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
-        print("Number of non-trainable parameters: {}".format(
-            sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
-        print("Input shape: {}".format(model.input_shape))
-        print("Output shape: {}".format(model.output_shape))
-        print("Optimizer: {}".format(model.optimizer.get_config()))
-        print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
+
+
+
+
+
+
+def additional_informations(model):
+    # Additional Information
+    print("\nAdditional Information:")
+    print("Number of parameters: {}".format(model.count_params()))
+    print("Number of trainable parameters: {}".format(
+        sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])))
+    print("Number of non-trainable parameters: {}".format(
+        sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])))
+    print("Input shape: {}".format(model.input_shape))
+    print("Output shape: {}".format(model.output_shape))
+    print("Optimizer: {}".format(model.optimizer.get_config()))
+    print("Learning rate: {}".format(model.optimizer.learning_rate.numpy()))
+    
+    print("Number of layers: {}".format(len(model.layers)))
+    print("Number of weights in the model: {}".format(len(model.weights)))
+
+
 
 def evaluate_with_metrics(model, ds_test=None, y_true=None, y_pred=None, predictions=None):
     # Evaluate the model
@@ -192,7 +185,7 @@ def evaluate_with_metrics_python(model, num_captchas) :
         shutil.rmtree(folder_path)
     os.makedirs(folder_path)
     
-    for i in range(num_captchas) : 
+    for i in range(5 * num_captchas) : 
         generate_captcha(4)
     captchas = os.listdir('generated_captcha_for_acc')
 
@@ -206,13 +199,10 @@ def evaluate_with_metrics_python(model, num_captchas) :
         captcha = captchas[j]
         image = cv2.imread(f'generated_captcha_for_acc/{captcha}')
         characters = feature_extraction(image) 
-        if len(characters) < 4 : 
-            continue
         i = 0
         while i < len(characters) : 
             if captcha[i] not in present_characters:
                 present_characters.add(captcha[i])
-                print(captcha[i])
                 counter += 1
             if characters[i].size == 0 : 
                 break
