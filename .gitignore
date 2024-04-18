@@ -13,3 +13,5 @@ attack_utils/checkpoints/labeler_mnist/training_*
 attack_utils/dl_models/checkpoints/
 attack_utils/dl_models/__pycache__
 attack_utils/__pycache__
+
+emnist.zip

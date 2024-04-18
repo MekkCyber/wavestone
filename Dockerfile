@@ -24,6 +24,10 @@ RUN /usr/local/bin/python3.11 -m pip install --upgrade pip && /usr/local/bin/pyt
 
 COPY . .
 
-EXPOSE 3006
+EXPOSE 300
+
+RUN mkdir /root/.cache/emnist
+
+COPY emnist.zip /root/.cache/emnist
 
 CMD [ "node", "server.js" ]

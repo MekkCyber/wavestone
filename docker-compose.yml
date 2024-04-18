@@ -25,6 +25,8 @@ services:
     volumes:
       - ./mongodb_docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     restart: unless-stopped
+    expose:
+      - 27017
 
 volumes:
   mongodb_data:
