@@ -9,7 +9,7 @@ RUN npm install
 # Update package lists
 RUN apt-get update
 
-RUN apt-get install libssl-dev openssl make gcc tar -y
+RUN apt-get install libssl-dev openssl make gcc tar libgl1-mesa-glx-y
 
 RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tgz
 
