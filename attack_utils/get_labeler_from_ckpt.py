@@ -7,7 +7,7 @@ def get_labeler_from_ckpt_mnist(checkpoint_path=None) :
     model = labeler_cnn_mnist.create_model()
     if checkpoint_path is None : 
         checkpoint_path = "checkpoints/labeler_mnist/training_3/best.weights.h5"
-    model.load_weights(checkpoint_path)
+    model.load_weights(checkpoint_path, skip_mismatch=True)
 
     #print model metrics
     # output_metrics(0, model)
