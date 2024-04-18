@@ -6,23 +6,21 @@ COPY package*.json ./
 
 RUN npm install
 
-# Update package lists
-RUN apt-get update
+RUN dpkg --add-architecture i386 && apt update && apt install libssl-dev openssl make gcc tar libgl1-mesa-glx:i386 ffmpeg libsm6 libxext6 -y
 
-RUN apt-get install libssl-dev openssl make gcc tar libgl1-mesa-glx-y
+RUN wget https://www.python.org/ftp/python/3.11.8/Python-3.11.8.tgz
 
-RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tgz
+RUN tar -xzvf ./Python-3.11.8.tgz
 
+RUN cd ./Python-3.11.8 && ./configure && make && make install
 
-RUN tar -xzvf ./Python-3.8.11.tgz
-
-RUN cd ./Python-3.8.11 && ./configure && make && make install
-
-RUN ln -fs /usr/src/app/Python-3.8.11/python /usr/bin/python
+RUN ln -fs /usr/src/app/Python-3.11.8/python /usr/bin/python
 
 COPY requirements.txt ./
 
-RUN /usr/local/bin/python3.8 -m pip install --upgrade pip && pip install -r requirements.txt
+RUN apt update && apt install -y python3-opencv
+
+RUN /usr/local/bin/python3.11 -m pip install --upgrade pip && /usr/local/bin/python3.11 -m pip install -r requirements.txt
 
 COPY . .
 
