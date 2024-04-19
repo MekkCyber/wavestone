@@ -31,3 +31,6 @@ Peu importe la méthode de lancement du projet, l'interface web est accessible d
 ## Administration
 
 Pour se connecter au terminal du docker faisant tourner le back, lancer la commande `docker exec -it projet_wavestone /bin/bash` (remplacer `projet_wavestone` par le nom du docker créé si nécessaire).
+
+Si la base de données est cassée, lancer la commande : `sudo chown -R mongodb:mongodb /var/lib/mongodb && sudo chown mongodb:mongodb /tmp/mongodb-27017.sock && sudo systemctl restart mongod`.
+
